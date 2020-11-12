@@ -5,29 +5,262 @@ output: html_document
 ---
 
 
-TEST TEST TEST
-
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+
 ```
 
-## R Markdown
+## Kaggle submission
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+- Interim report is due next week.  Get started!
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+- Interim report *requires* that you have submitted to Kaggle!  Video in module 7 detailing submission.
 
-```{r cars}
-summary(cars)
+- 5 predictor model.  What does that mean?  5 predictors entered into the model.  Factor variables (like neighborhood) will be counted as 1 predictor even though they produce numerous coefficients (1 for every factor level minus 1). For this model DO NOT include interactions (which can be very helpful) or quadratic terms. The limit on model terms will force you to balance predictive performance and simplicity and will ensure that you become familiar with the predictive characteristics of the variables in the dataset. 
+
+## Requirements for Interim report
+    
+- Length: No more than 1 page, single spaced, including graphs and tables.
+- Benchmark perfromance:  minimum in-sample R2 for this model is .75. Please keep experimenting with models until you have reached that benchmark.
+- Your 1 page interim report should (1) introduce the problem, (2) describe your model, and (3) report model performance, including: 
+
+    + RMSE and R2 on the train set
+    + Estimated RMSE and R2 on the test set. (It is fine to report log RMSE.)
+    + Your Kaggle score (returned log RMSE) and rank.
+
+How do you get performance metrics on the test set when there is no target variable? Through cross-validation! The caret package has been designed to do cross-validation every time it fits a model. The information that caret automatically prints to the screen is the cross-validation estimate of the model’s out-of-sample performance. More on this next week.
+
+Check the grading rubric for this assignment at Canvas for further details.
+
+## Final project modeling issues 
+
+    + NAs.  If there are missing values among the test set predictors, predict() will produce an NA.  Kaggle won't like that! *Stop and think*:  have you coded the NAs appropriately? For example, `alley` has a bunch of NAs, but in that case NA does not mean missing data but instead means: no alley.  The appropriate action is to recode NAs in `alley` as "none."
+    
+    + Data modeling.  Should a variable be treated as an integer or a factor?  Example 1:  The quality variables have levels (poor, fair, average, good, excellent).  These could be represented as integers, 1 - 5. Example 2:  YearBuilt is a year, which could be treated as a factor or an integer.  Consider:  factors will create a more complicated and specific model with many f - 1 coefficients, where f is the number of factor levels. Coding factors as integers will produce just one coefficient, but assumes a linear relationship between predictor and outcome. What is at stake in this assumption?---that the relationship between predictor and outcome is constant from level to level.  There is an illustration of this issue below.
+
+    + Missing factor levels. The predict() function must find exactly the same columns/factor levels in the new data as in the data used to fit the model. So if there is a factor level in the train set that is not in the test set then you will not be able to use your model to predict. Example:  YearBuilt as a factor has some levels in the train set that do not exist in the test set.  In such a case you cannot use the your model for prediction--- it will produce an error.
+
+
+You are welcome to put off dealing with these problems in the interim report by choosing only variables that have no legit NAs and that have complete factor levels.
+
+## Inspect data
+
+**Download data.**
+
+```{r}
+test <- read_csv("test.csv")
+train <- read_csv("train.csv")
+submit_example <- read_csv("sample_submission.csv")
+
 ```
 
-## Including Plots
+**Check variables** in test and train with `names()`. 
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+names(train)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+Notice that there is no SalePrice in test.  Why??
+
+```{r}
+names(test) 
+```
+
+**Template for the submission.** Must match this exactly!
+
+```{r}
+head(submit_example) 
+```
+
+## Factor levels in categorical predictors
+
+Check factor levels for Neighborhood in test and train.
+
+```{r}
+
+factor(train$Neighborhood) %>% levels
+```
+
+```{r}
+factor(test$Neighborhood) %>% levels
+
+```
+
+They appear to be the same.  For contrast, check factor levels in YearBuilt.
+
+```{r}
+factor(train$YearBuilt) %>% levels
+```
+
+```{r}
+
+factor(test$YearBuilt) %>% levels
+```
+
+Different! Some of the test levels are not in train and vice versa.
+
+This will prevent a model developed with the train set from using the test set to predict.  Observe:
+
+```{r}
+(yrbuilt_model <- lm(SalePrice ~ factor(YearBuilt), data = train)) %>% 
+  summary
+
+predict(yrbuilt_model, newdata = test)
+```
+
+It is possible to fix this problem by manually setting the levels in test to match those in train.
+
+```{r}
+test$YearBuilt <- factor(test$YearBuilt, levels = c(factor(train$YearBuilt) %>% levels))
+
+predict(yrbuilt_model, newdata = test) %>% 
+  head
+
+```
+
+## Data modeling choices 
+
+Obviously, the model with YearBuilt as a factor is very complicated, with f - 1 coefficients.  This allows the model to fit the data non-linearly, with a separate fit for each year.
+
+```{r}
+ggplot(train, aes(factor(YearBuilt), SalePrice))+
+  geom_boxplot() +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5)) +
+  labs("SalePrice ~ YearBuilt", x = "YearBuilt")
+
+```
+
+Notice what happens when we treat YearBuilt as an integer in the model.
+
+```{r}
+(model <- lm(SalePrice ~ YearBuilt, data = train)) %>% 
+  summary
+
+```
+
+We get just one coefficient, which assumes that an increase of 1 unit is associated with a fixed (linear) change in y across all the years. 
+
+```{r}
+
+ggplot(train, aes(YearBuilt, SalePrice))+
+  geom_jitter() +
+  theme_minimal() +
+  geom_smooth(method = "lm", se = F) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5)) +
+  labs("SalePrice ~ YearBuilt", x = "YearBuilt")
+```
+
+Which is better?  It is a tradeoff:
+
+- More coefficients = better and more flexible fit. Higher R-Squared but could be overfitting the training set.
+- Fewer coefficients = less flexible fit. Lower R-squared but might generalize well to new data.
+
+## Kaggle submission
+
+Code to set up the submission file:
+
+```{r}
+submit <- test %>% 
+  select(Id) %>% 
+  mutate(SalePrice = predict(yrbuilt_model, newdata = test))
+
+head(submit)
+```
+
+```{r}
+
+head(submit_example)
+```
+
+
+## Attempting to identify variables with NAs so we can ignore them (this is new material not part of Jeff's template stuff above)
+
+I can't figure out a cool way to find all the variables that have NAs in them. I tried using:
+
+table(train$Id, useNA = "always")
+
+to view tables of each variable, but there are 81 variables and this is a very tedious approach.  
+
+I think it may be best to propose a model, run it, and if it doesn't run because of NAs in one of the variables, we just ditch that variable from further consideration.
+
+So I guess the point we are at is trying find the best five variables to include in a model until we get one that has R-squared > 0.75
+
+There are just way too many variables in this dataset...
+
+
+```{r}
+
+# train dataset has 2 illegal colnames: 1stFlrSF and 2ndFlrSF, update colnames for dataset
+
+colnames(train) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFrontage",   "LotArea",       "Street",        "Alley",         "LotShape", "LandContour" ,  "Utilities" ,    "LotConfig",     "LandSlope",     "Neighborhood",  "Condition1",    "Condition2",    "BldgType", "HouseStyle" ,   "OverallQual",   "OverallCond",   "YearBuilt"    , "YearRemodAdd" , "RoofStyle",     "RoofMatl",      "Exterior1st", "Exterior2nd",   "MasVnrType",    "MasVnrArea",    "ExterQual",     "ExterCond",     "Foundation",    "BsmtQual",      "BsmtCond","BsmtExposure",  "BsmtFinType1",  "BsmtFinSF1",    "BsmtFinType2",  "BsmtFinSF2",    "BsmtUnfSF",     "TotalBsmtSF" ,  "Heating", "HeatingQC",     "CentralAir" ,   "Electrical"   , "FirstFlrSF" ,     "SecondFlrSF" ,     "LowQualFinSF",  "GrLivArea",     "BsmtFullBath",  "BsmtHalfBath",  "FullBath",      "HalfBath",      "BedroomAbvGr",  "KitchenAbvGr",  "KitchenQual",   "TotRmsAbvGrd",  "Functional",   
+"Fireplaces",    "FireplaceQu",   "GarageType",    "GarageYrBlt",   "GarageFinish",  "GarageCars",    "GarageArea",    "GarageQual",   
+"GarageCond",    "PavedDrive",    "WoodDeckSF",    "OpenPorchSF",   "EnclosedPorch", "3SsnPorch",     "ScreenPorch",   "PoolArea",      "PoolQC",        "Fence"       ,  "MiscFeature",   "MiscVal"     ,  "MoSold"  ,      "YrSold"  ,      "SaleType"    ,  "SaleCondition", "SalePrice")
+
+colnames(train)
+```
+
+
+
+```{r}
+
+lm(SalePrice ~ Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea, data=train) %>% summary
+
+# BldgType 0.03
+# LotArea 0.06
+# Neighborhood 0.538
+# HouseStyle 0.08
+# YearBuilt 0.27
+# FirstFlrSF 0.37
+# SecondFlrSF 0.1
+# TotalBsmtSF 0.38
+# TotRmsAbvGrd 0.28
+# GarageArea 0.38
+# 
+# Neighborhood + YearBuilt 0.55
+# Neighborhood + YearBuilt + LotArea = 0.59
+# Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF 0.76
+# Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + TotalBsmtSF 0.77
+# Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + TotRmsAbvGrd 0.76
+# Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea 0.77
+
+
+```
+```{r}
+
+#plot SalePrice by 1st floor square feet
+
+ggplot(train, aes(FirstFlrSF, SalePrice)) +
+  geom_point() +
+  theme_minimal() +
+  stat_smooth(method="lm", se = F) +
+  labs(title = "price ~ 1st floor sqft")
+
+```
+
+```{r}
+
+#plot SalePrice by 2nd floor square feet
+
+ggplot(train, aes(SecondFlrSF, SalePrice)) +
+  geom_point() +
+  theme_minimal() +
+  stat_smooth(method="lm", se = F) +
+  labs(title = "price ~ 2nd floor sqft")
+
+# THIS VARIABLE IS WEIRD...LOTS OF ZEROES
+
+```
+
+```{r}
+
+#plot SalePrice by YearBuilt...not sure how to make this plot
+
+ggplot(train, aes(SalePrice)) +
+  geom_boxplot()+
+
+
+```
+
