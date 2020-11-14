@@ -164,7 +164,7 @@ Code to set up the submission file:
 ```{r}
 submit <- test %>% 
   select(Id) %>% 
-  mutate(SalePrice = predict(yrbuilt_model, newdata = test))
+  mutate(SalePrice = predict(model, newdata = test))
 
 head(submit)
 ```
@@ -201,7 +201,9 @@ colnames(train) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFron
 
 colnames(train)
 
-# same thing for test (minus sales price)
+
+# same thing for test (minus sales price) so it will evaluate properly
+
 colnames(test) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFrontage",   "LotArea",       "Street",        "Alley",         "LotShape", "LandContour" ,  "Utilities" ,    "LotConfig",     "LandSlope",     "Neighborhood",  "Condition1",    "Condition2",    "BldgType", "HouseStyle" ,   "OverallQual",   "OverallCond",   "YearBuilt"    , "YearRemodAdd" , "RoofStyle",     "RoofMatl",      "Exterior1st", "Exterior2nd",   "MasVnrType",    "MasVnrArea",    "ExterQual",     "ExterCond",     "Foundation",    "BsmtQual",      "BsmtCond","BsmtExposure",  "BsmtFinType1",  "BsmtFinSF1",    "BsmtFinType2",  "BsmtFinSF2",    "BsmtUnfSF",     "TotalBsmtSF" ,  "Heating", "HeatingQC",     "CentralAir" ,   "Electrical"   , "FirstFlrSF" ,     "SecondFlrSF" ,     "LowQualFinSF",  "GrLivArea",     "BsmtFullBath",  "BsmtHalfBath",  "FullBath",      "HalfBath",      "BedroomAbvGr",  "KitchenAbvGr",  "KitchenQual",   "TotRmsAbvGrd",  "Functional",   
 "Fireplaces",    "FireplaceQu",   "GarageType",    "GarageYrBlt",   "GarageFinish",  "GarageCars",    "GarageArea",    "GarageQual",   
 "GarageCond",    "PavedDrive",    "WoodDeckSF",    "OpenPorchSF",   "EnclosedPorch", "3SsnPorch",     "ScreenPorch",   "PoolArea",      "PoolQC",        "Fence"       ,  "MiscFeature",   "MiscVal"     ,  "MoSold"  ,      "YrSold"  ,      "SaleType"    ,  "SaleCondition")
@@ -228,7 +230,8 @@ head(test$Total_SQFT)
 
 ```{r}
 
-lm(SalePrice ~ Neighborhood + YearBuilt +  + Total_SQFT + GarageArea, data=train) %>% summary
+submit_model <- lm(SalePrice ~ Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea, data=train)
+summary (submit_model)
 
 
 
@@ -254,6 +257,33 @@ lm(SalePrice ~ Neighborhood + YearBuilt +  + Total_SQFT + GarageArea, data=train
 
 
 ```
+
+
+# export our predictions as a .csv  
+there's probably a better way to do this but in the meantime this should work and we can each swap out our unique file path for the second argument
+source: https://datatofish.com/export-dataframe-to-csv-in-r/
+```{r}
+#code for submitting
+kaggle_submit <- test %>% 
+  select(Id) %>% 
+  mutate(SalePrice = predict(submit_model, newdata = test))
+
+head(kaggle_submit)
+
+write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+
+#Mike - "C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv"
+
+
+```
+
+
+```
+
+
+
+
+
 ```{r}
 
 #plot SalePrice by 1st floor square feet

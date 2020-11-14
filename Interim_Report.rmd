@@ -7,8 +7,23 @@ output: html_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
 ```
 
 ## Summary
+Using the variables Neighborhood, YearBuilt, FirstFlrSF, SecondFlrSF, GarageArea we generated a model that produced the following outputs when predicting SalesPrice:
+* R2
+* Kaggle
+* Ranking
 
-## Support
+
+
+
+## Data Transformation 
+We 
+
+
+
+
+## Plots
+
