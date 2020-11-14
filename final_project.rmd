@@ -1,12 +1,9 @@
 ---
 title: "final_project"
-author: "Mike, Craig, Belu"
+author: "Mike Marett, Craig Teerlink, Belu Chik"
 output: html_document
 ---
 
-HELLO HELLO
-
-HELLO AGAIN
 
 
 ```{r setup, include=FALSE}
@@ -26,7 +23,7 @@ library(tidyverse)
 ## Requirements for Interim report
     
 - Length: No more than 1 page, single spaced, including graphs and tables.
-- Benchmark perfromance:  minimum in-sample R2 for this model is .75. Please keep experimenting with models until you have reached that benchmark.
+- Benchmark performance:  minimum in-sample R2 for this model is .75. Please keep experimenting with models until you have reached that benchmark.
 - Your 1 page interim report should (1) introduce the problem, (2) describe your model, and (3) report model performance, including: 
 
     + RMSE and R2 on the train set
@@ -198,18 +195,44 @@ There are just way too many variables in this dataset...
 
 # train dataset has 2 illegal colnames: 1stFlrSF and 2ndFlrSF, update colnames for dataset
 
+
 colnames(train) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFrontage",   "LotArea",       "Street",        "Alley",         "LotShape", "LandContour" ,  "Utilities" ,    "LotConfig",     "LandSlope",     "Neighborhood",  "Condition1",    "Condition2",    "BldgType", "HouseStyle" ,   "OverallQual",   "OverallCond",   "YearBuilt"    , "YearRemodAdd" , "RoofStyle",     "RoofMatl",      "Exterior1st", "Exterior2nd",   "MasVnrType",    "MasVnrArea",    "ExterQual",     "ExterCond",     "Foundation",    "BsmtQual",      "BsmtCond","BsmtExposure",  "BsmtFinType1",  "BsmtFinSF1",    "BsmtFinType2",  "BsmtFinSF2",    "BsmtUnfSF",     "TotalBsmtSF" ,  "Heating", "HeatingQC",     "CentralAir" ,   "Electrical"   , "FirstFlrSF" ,     "SecondFlrSF" ,     "LowQualFinSF",  "GrLivArea",     "BsmtFullBath",  "BsmtHalfBath",  "FullBath",      "HalfBath",      "BedroomAbvGr",  "KitchenAbvGr",  "KitchenQual",   "TotRmsAbvGrd",  "Functional",   
 "Fireplaces",    "FireplaceQu",   "GarageType",    "GarageYrBlt",   "GarageFinish",  "GarageCars",    "GarageArea",    "GarageQual",   
 "GarageCond",    "PavedDrive",    "WoodDeckSF",    "OpenPorchSF",   "EnclosedPorch", "3SsnPorch",     "ScreenPorch",   "PoolArea",      "PoolQC",        "Fence"       ,  "MiscFeature",   "MiscVal"     ,  "MoSold"  ,      "YrSold"  ,      "SaleType"    ,  "SaleCondition", "SalePrice")
 
 colnames(train)
+
+# same thing for test (minus sales price)
+colnames(test) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFrontage",   "LotArea",       "Street",        "Alley",         "LotShape", "LandContour" ,  "Utilities" ,    "LotConfig",     "LandSlope",     "Neighborhood",  "Condition1",    "Condition2",    "BldgType", "HouseStyle" ,   "OverallQual",   "OverallCond",   "YearBuilt"    , "YearRemodAdd" , "RoofStyle",     "RoofMatl",      "Exterior1st", "Exterior2nd",   "MasVnrType",    "MasVnrArea",    "ExterQual",     "ExterCond",     "Foundation",    "BsmtQual",      "BsmtCond","BsmtExposure",  "BsmtFinType1",  "BsmtFinSF1",    "BsmtFinType2",  "BsmtFinSF2",    "BsmtUnfSF",     "TotalBsmtSF" ,  "Heating", "HeatingQC",     "CentralAir" ,   "Electrical"   , "FirstFlrSF" ,     "SecondFlrSF" ,     "LowQualFinSF",  "GrLivArea",     "BsmtFullBath",  "BsmtHalfBath",  "FullBath",      "HalfBath",      "BedroomAbvGr",  "KitchenAbvGr",  "KitchenQual",   "TotRmsAbvGrd",  "Functional",   
+"Fireplaces",    "FireplaceQu",   "GarageType",    "GarageYrBlt",   "GarageFinish",  "GarageCars",    "GarageArea",    "GarageQual",   
+"GarageCond",    "PavedDrive",    "WoodDeckSF",    "OpenPorchSF",   "EnclosedPorch", "3SsnPorch",     "ScreenPorch",   "PoolArea",      "PoolQC",        "Fence"       ,  "MiscFeature",   "MiscVal"     ,  "MoSold"  ,      "YrSold"  ,      "SaleType"    ,  "SaleCondition")
+
+colnames(train) == colnames(test)
+```
+
+```{r}
+# Gonna attempt to combine the square footage fields
+# Total_SQFT = Total Finished Square Footage =  FirstFlrSF + SecondFlrSF + BsmtFinSF1 + BsmtFinSF2
+
+(train <- train %>%
+  mutate(Total_SQFT = (FirstFlrSF + SecondFlrSF +  BsmtFinSF1 + BsmtFinSF2)))
+
+(test <- test %>%
+  mutate(Total_SQFT = (FirstFlrSF + SecondFlrSF +  BsmtFinSF1 + BsmtFinSF2)))
+
+head(train$Total_SQFT)
+
+head(test$Total_SQFT)
 ```
 
 
 
 ```{r}
 
-lm(SalePrice ~ Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea, data=train) %>% summary
+lm(SalePrice ~ Neighborhood + YearBuilt +  + Total_SQFT + GarageArea, data=train) %>% summary
+
+
+
 
 # BldgType 0.03
 # LotArea 0.06
@@ -228,6 +251,7 @@ lm(SalePrice ~ Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageAr
 # Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + TotalBsmtSF 0.77
 # Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + TotRmsAbvGrd 0.76
 # Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea 0.77
+# Neighborhood + YearBuilt +  + Total_SQFT + GarageArea 0.75
 
 
 ```
