@@ -1,19 +1,41 @@
 ---
 title: "Interim_Report"
-author: "Mike,Craig,Belu"
+author: "Belu Chik, Craig Teerlink, Mike Marett"
 date: "11/15/2020"
 output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(tidyverse)
 ```
 
-## Summary
-Using the variables Neighborhood, YearBuilt, FirstFlrSF, SecondFlrSF, GarageArea we generated a model that produced the following outputs when predicting SalesPrice:
+```{r}
+### Requirements for Interim report
+    
+#- Length: No more than 1 page, single spaced, including graphs and tables.
+#- Benchmark performance:  minimum in-sample R2 for this model is .75. Please keep experimenting with models until you have #reached that benchmark.
+#- Your 1 page interim report should (1) introduce the problem, (2) describe your model, and (3) report model performance, including: 
 
-* R^2:.77
+#    + RMSE and R2 on the train set
+ #   + Estimated RMSE and R2 on the test set. (It is fine to report log RMSE.)
+  #  + Your Kaggle score (returned log RMSE) and rank.
+
+```
+
+
+### Model Description
+We created a model that predicts the sales price of a home based on its characteristics.  We used our domain knowledge of real estate prices to identify the variables that we believe would be good predictors of the SalesPrice target variable. After trying out various combinations the regression with the best performance included these five fields:
+
+Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea 
+
+
+### Model Performance 
+
+* train R^2:.77
+* train RMSE: ????
+* estimated test R^2:????
+* estimated test RMSE:????
 * Kaggle Score:0.24
 * Kaggle Ranking: 3702
 ![Kaggle Rank](images/kaggle_rank.png)
@@ -21,15 +43,7 @@ Using the variables Neighborhood, YearBuilt, FirstFlrSF, SecondFlrSF, GarageArea
 
 
 
-## Data Transformation 
-We used our domain knowledge of real estate prices to identify the variables that we believe would be good predictors of the SalesPrice target variable.  
-
-We experimented with other combinations including  ###this this and this### but these all resulted in lower in-sample R^2 values. 
-
-
-
-
-## Plots
+### Plots
 ```{r}
 
 
