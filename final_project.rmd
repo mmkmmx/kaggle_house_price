@@ -211,6 +211,30 @@ colnames(test) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFront
 colnames(train) == colnames(test)
 ```
 
+
+#GarageArea Cleanup
+```{r}
+#ran into an error submitting the test file - looks like testID 2577 has an NA for Garage Area - I changed this to a 0
+
+#Before
+test %>%
+  select(Id,GarageArea) %>%
+  filter(Id == 2577)
+
+
+test <- test %>%
+  mutate(GarageArea = ifelse(is.na(GarageArea), 0, GarageArea))
+
+#After
+test %>%
+  select(Id,GarageArea) %>%
+  filter(Id == 2577)
+
+
+```
+
+
+
 ```{r}
 # Gonna attempt to combine the square footage fields
 # Total_SQFT = Total Finished Square Footage =  FirstFlrSF + SecondFlrSF + BsmtFinSF1 + BsmtFinSF2
@@ -270,7 +294,10 @@ kaggle_submit <- test %>%
 
 head(kaggle_submit)
 
+
 write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+
+
 
 #Mike - "C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv"
 

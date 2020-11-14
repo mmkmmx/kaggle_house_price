@@ -12,18 +12,25 @@ library(tidyverse)
 
 ## Summary
 Using the variables Neighborhood, YearBuilt, FirstFlrSF, SecondFlrSF, GarageArea we generated a model that produced the following outputs when predicting SalesPrice:
-* R2
-* Kaggle
-* Ranking
+
+* R^2:.77
+* Kaggle Score:0.24
+* Kaggle Ranking: 3702
+![Kaggle Rank](images/kaggle_rank.png)
 
 
 
 
 ## Data Transformation 
-We 
+We used our domain knowledge of real estate prices to identify the variables that we believe would be good predictors of the SalesPrice target variable.  
+
+We experimented with other combinations including  ###this this and this### but these all resulted in lower in-sample R^2 values. 
 
 
 
 
 ## Plots
+```{r}
 
+
+```
