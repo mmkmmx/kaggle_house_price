@@ -26,26 +26,12 @@ library(tidyverse)
 There are so many factors that can affect price of houses regardles the cities or countries. Often times homebuyers and real estate companies would come across with a question to consider, "what factors tend to have greater influence on prices?" With the sample training dataset of home prices in Ames, Iowa, there are 80 variables of 1459 homes shown, along with the sales price of each home. That information becomes critical to analyze to find out which are the top factors/predictors of home sales price. After analyzing of the training dataset, we will predict the home prices of 1459 houses in the testing dataset, based on their features. The purpose of this practice is to discover the pattern and build the model to predict home sales prices with the highest accuracy possible. 
 
 ### Model Description
-We created a model that predicts the sales price of a home based on its characteristics.  We used our domain knowledge of real estate prices to identify the variables that we believe would be good predictors of the SalesPrice target variable. After trying out various combinations the regression with the best performance included these five fields:
-
-Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea 
-
+We created a model that predicts the sales price of a home based on its characteristics.  We used our domain knowledge of real estate prices to identify the variables that we believe would be good predictors of the SalesPrice target variable. After trying out various combinations the regression with the best performance included these five variables: neighborhood, year built, first-floor square footage, second-floor square footage, and garage area.  
 
 ### Model Performance 
 
-* train R^2: 0.7766
-* train RMSE: 37920
-* estimated test R^2 (10-fold cross-validation via caret): 0.7582
-* estimated test RMSE (10-fold cross-validation via caret): 39135.43 
-* Kaggle Score:0.24
-* Kaggle Ranking: 3702
-![Kaggle Rank](images/kaggle_rank.png)
+The linear model had in-sample R-squared of 0.7766 and root mean squared error (RMSE) of 37,920. The 10-fold cross validation (out of sample performance) of the model had an R-squared of 0.7582 and RMSE 39,135.43. Since the 10-fold cross validation RMSE is only slightly larger than the in-sample RMSE, the model has low variance/high bias and is likely to generalize well to external datasets. The Kaggle rank for the model was 3702 and the score was 0.24, which we hope to improve as we adjust our model in the future. 
 
 
 
 
-### Plots
-```{r}
-
-
-```
