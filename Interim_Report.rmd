@@ -33,10 +33,10 @@ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea
 
 ### Model Performance 
 
-* train R^2:.77
-* train RMSE: ????
-* estimated test R^2:????
-* estimated test RMSE:????
+* train R^2: 0.7766
+* train RMSE: 37920
+* estimated test R^2 (10-fold cross-validation via caret): 0.7582
+* estimated test RMSE (10-fold cross-validation via caret): 39135.43 
 * Kaggle Score:0.24
 * Kaggle Ranking: 3702
 ![Kaggle Rank](images/kaggle_rank.png)
