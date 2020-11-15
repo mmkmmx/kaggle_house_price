@@ -301,15 +301,38 @@ write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price
 
 #Mike - "C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv"
 
+```
 
+# in-sample and out of sample R2 via caret linear model 
+
+```{r}
+
+# Fit linear model: SalePrice ~ Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea
+
+caret_lm <- train(SalePrice ~ Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea,
+                  data = train,
+                   method = "lm")
+
+caret_lm 
+
+# This is the caret's cross-validation estimate of the model's 
+# out-of-sample performance!  NOT in-sample performance.
+#
+# RMSE      Rsquared   MAE     
+# 39135.43  0.7581681  24985.36
+
+# Here is in-sample performance:
+
+caret_lm %>% 
+  summary
+
+# Residual standard error: 37920 on 1431 degrees of freedom
+# Multiple R-squared:  0.7766,	Adjusted R-squared:  0.7722 
 ```
 
 
-```
 
-
-
-
+# some plots for after interim report
 
 ```{r}
 
