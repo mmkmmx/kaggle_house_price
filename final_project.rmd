@@ -371,3 +371,5 @@ ggplot(train, aes(SalePrice)) +
 ```
 
 GOOD BYE
+
+Peace out!
