@@ -6,71 +6,162 @@ output: html_document
 
 
 ```{r setup, include=FALSE}
+
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
+library(caret)
 
 ```
 
-## Kaggle submission
+## Download and inspect data
 
-- Interim report is due next week.  Get started!
+```{r}
 
-- Interim report *requires* that you have submitted to Kaggle!  Video in module 7 detailing submission.
+d1 <- read_csv("train.csv")
+dtest <- read_csv("test.csv")
 
-- 5 predictor model.  What does that mean?  5 predictors entered into the model.  Factor variables (like neighborhood) will be counted as 1 predictor even though they produce numerous coefficients (1 for every factor level minus 1). For this model DO NOT include interactions (which can be very helpful) or quadratic terms. The limit on model terms will force you to balance predictive performance and simplicity and will ensure that you become familiar with the predictive characteristics of the variables in the dataset. 
+# rename the two illegally named variables 
 
-## Requirements for Interim report
-    
-- Length: No more than 1 page, single spaced, including graphs and tables.
-- Benchmark performance:  minimum in-sample R2 for this model is .75. Please keep experimenting with models until you have reached that benchmark.
-- Your 1 page interim report should (1) introduce the problem, (2) describe your model, and (3) report model performance, including: 
+colnames(d1) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFrontage",   "LotArea",       "Street",        "Alley",         "LotShape", "LandContour" ,  "Utilities" ,    "LotConfig",     "LandSlope",     "Neighborhood",  "Condition1",    "Condition2",    "BldgType", "HouseStyle" ,   "OverallQual",   "OverallCond",   "YearBuilt"    , "YearRemodAdd" , "RoofStyle",     "RoofMatl",      "Exterior1st", "Exterior2nd",   "MasVnrType",    "MasVnrArea",    "ExterQual",     "ExterCond",     "Foundation",    "BsmtQual",      "BsmtCond","BsmtExposure",  "BsmtFinType1",  "BsmtFinSF1",    "BsmtFinType2",  "BsmtFinSF2",    "BsmtUnfSF",     "TotalBsmtSF" ,  "Heating", "HeatingQC",     "CentralAir" ,   "Electrical"   , "FirstFlrSF" ,     "SecondFlrSF" ,     "LowQualFinSF",  "GrLivArea",     "BsmtFullBath",  "BsmtHalfBath",  "FullBath",      "HalfBath",      "BedroomAbvGr",  "KitchenAbvGr",  "KitchenQual",   "TotRmsAbvGrd",  "Functional",   
+"Fireplaces",    "FireplaceQu",   "GarageType",    "GarageYrBlt",   "GarageFinish",  "GarageCars",    "GarageArea",    "GarageQual",   
+"GarageCond",    "PavedDrive",    "WoodDeckSF",    "OpenPorchSF",   "EnclosedPorch", "3SsnPorch",     "ScreenPorch",   "PoolArea",      "PoolQC",        "Fence"       ,  "MiscFeature",   "MiscVal"     ,  "MoSold"  ,      "YrSold"  ,      "SaleType"    ,  "SaleCondition", "SalePrice")
 
-    + RMSE and R2 on the train set
-    + Estimated RMSE and R2 on the test set. (It is fine to report log RMSE.)
-    + Your Kaggle score (returned log RMSE) and rank.
+# same thing for dtest (minus sales price)
 
-How do you get performance metrics on the test set when there is no target variable? Through cross-validation! The caret package has been designed to do cross-validation every time it fits a model. The information that caret automatically prints to the screen is the cross-validation estimate of the model’s out-of-sample performance. More on this next week.
+colnames(dtest) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFrontage",   "LotArea",       "Street",        "Alley",         "LotShape", "LandContour" ,  "Utilities" ,    "LotConfig",     "LandSlope",     "Neighborhood",  "Condition1",    "Condition2",    "BldgType", "HouseStyle" ,   "OverallQual",   "OverallCond",   "YearBuilt"    , "YearRemodAdd" , "RoofStyle",     "RoofMatl",      "Exterior1st", "Exterior2nd",   "MasVnrType",    "MasVnrArea",    "ExterQual",     "ExterCond",     "Foundation",    "BsmtQual",      "BsmtCond","BsmtExposure",  "BsmtFinType1",  "BsmtFinSF1",    "BsmtFinType2",  "BsmtFinSF2",    "BsmtUnfSF",     "TotalBsmtSF" ,  "Heating", "HeatingQC",     "CentralAir" ,   "Electrical"   , "FirstFlrSF" ,     "SecondFlrSF" ,     "LowQualFinSF",  "GrLivArea",     "BsmtFullBath",  "BsmtHalfBath",  "FullBath",      "HalfBath",      "BedroomAbvGr",  "KitchenAbvGr",  "KitchenQual",   "TotRmsAbvGrd",  "Functional",   
+"Fireplaces",    "FireplaceQu",   "GarageType",    "GarageYrBlt",   "GarageFinish",  "GarageCars",    "GarageArea",    "GarageQual",   
+"GarageCond",    "PavedDrive",    "WoodDeckSF",    "OpenPorchSF",   "EnclosedPorch", "3SsnPorch",     "ScreenPorch",   "PoolArea",      "PoolQC",        "Fence"       ,  "MiscFeature",   "MiscVal"     ,  "MoSold"  ,      "YrSold"  ,      "SaleType"    ,  "SaleCondition")
 
-Check the grading rubric for this assignment at Canvas for further details.
+#colnames(d1) == colnames(dtest)
 
-## Final project modeling issues 
+```
+
+## Code used for the interim report 
+
+#GarageArea Cleanup
+```{r}
+
+#ran into an error submitting the test file - looks like testID 2577 has an NA for Garage Area - I changed this to a 0
+
+dtest <- dtest %>%
+  mutate(GarageArea = ifelse(is.na(GarageArea), 0, GarageArea))
+
+# Combine the square footage fields:
+# Total_SQFT =  FirstFlrSF + SecondFlrSF + BsmtFinSF1 + BsmtFinSF2   <-- we did not use TotalSQFT in our submitted model
+
+#d1 <- d1 %>%
+#  mutate(Total_SQFT = (FirstFlrSF + SecondFlrSF +  BsmtFinSF1 + BsmtFinSF2))
+#head(d1$Total_SQFT)
+#head(dtest$Total_SQFT)
+
+submit_model <- lm(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea, data=d1)
+summary (submit_model)
+
+# export our predictions as a .csv  
+
+kaggle_submit <- dtest %>% 
+  select(Id) %>% 
+  mutate(SalePrice = predict(submit_model, newdata = dtest))
+
+#head(kaggle_submit)
+
+#write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+#     <-- I cannot write to this file
+
+#Mike - "C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv"
+
+# In-sample and out of sample R2 via caret linear model 
+
+# Fit linear model: SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea
+
+caret_lm <- train(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea,
+                  data = d1,
+                   method = "lm")
+
+caret_lm 
+
+# This is the caret's cross-validation estimate of the model's 
+# out-of-sample performance!  NOT in-sample performance.
+#
+# RMSE      Rsquared   MAE     
+# 39076     0.7521927  24985.36
+
+# Here is in-sample performance:
+
+caret_lm %>% 
+  summary
+
+# Residual standard error: 37920 on 1431 degrees of freedom
+# Multiple R-squared:  0.7766,	Adjusted R-squared:  0.7722
+
+```
+
+## Data issue 1: NAs 
 
     + NAs.  If there are missing values among the test set predictors, predict() will produce an NA.  Kaggle won't like that! *Stop and think*:  have you coded the NAs appropriately? For example, `alley` has a bunch of NAs, but in that case NA does not mean missing data but instead means: no alley.  The appropriate action is to recode NAs in `alley` as "none."
-    
-    + Data modeling.  Should a variable be treated as an integer or a factor?  Example 1:  The quality variables have levels (poor, fair, average, good, excellent).  These could be represented as integers, 1 - 5. Example 2:  YearBuilt is a year, which could be treated as a factor or an integer.  Consider:  factors will create a more complicated and specific model with many f - 1 coefficients, where f is the number of factor levels. Coding factors as integers will produce just one coefficient, but assumes a linear relationship between predictor and outcome. What is at stake in this assumption?---that the relationship between predictor and outcome is constant from level to level.  There is an illustration of this issue below.
+
+```{r}
+
+# show NA counts for all variables 
+
+dtest %>% 
+  mutate_all(.funs = is.na) %>% 
+  summarize_all(.funs = sum) %>%
+  t()
+
+# Decisions...
+# 
+# LotFrontage:   227  replace NAs with 0
+# Alley:        1352  replace NAs with 0
+# Utilities:       2  replace NAs with median
+# Exterior1st:     1  replace NAs with median (is this a factor or continuous RV?)
+# Exterior2nd:     1  replace NAs with median (is this a factor or continuous RV?)
+# MasVnrType:     16  
+# MasVnrArea:     15  
+# BsmtQual        44
+# BsmtCond        45
+# BsmtExposure    44
+# BsmtFinType1    42
+# BsmtFinSF1       1
+# BsmtFinType2    42
+# BsmtFinSF2       1
+# BsmtUnfSF        1
+# TotalBsmtSF      1
+# KitchenQual      1
+# Functional       2
+# FireplaceQu    730
+# GarageType      76
+# GarageYrBlt     78
+# GarageFinish    78
+# GarageCars       1
+# GarageQual      78
+# GarageCond      78
+# PoolQC        1456
+# Fence         1169
+# MiscFeature   1408
+# SaleType         1
+
+```
+
+## Data issue 2: factor variables
+
+    Data modeling.  Should a variable be treated as an integer or a factor?  Example 1:  The quality variables have levels (poor, fair, average, good, excellent).  These could be represented as integers, 1 - 5. Example 2:  YearBuilt is a year, which could be treated as a factor or an integer.  Consider:  factors will create a more complicated and specific model with many f - 1 coefficients, where f is the number of factor levels. Coding factors as integers will produce just one coefficient, but assumes a linear relationship between predictor and outcome. What is at stake in this assumption?---that the relationship between predictor and outcome is constant from level to level.  There is an illustration of this issue below.
+
+```{r}
+
+
+
+```
+
+## Data issue 3: missing factor levels between test and train data
 
     + Missing factor levels. The predict() function must find exactly the same columns/factor levels in the new data as in the data used to fit the model. So if there is a factor level in the train set that is not in the test set then you will not be able to use your model to predict. Example:  YearBuilt as a factor has some levels in the train set that do not exist in the test set.  In such a case you cannot use the your model for prediction--- it will produce an error.
 
 
-You are welcome to put off dealing with these problems in the interim report by choosing only variables that have no legit NAs and that have complete factor levels.
-
-## Inspect data
-
-**Download data.**
-
 ```{r}
-test <- read_csv("test.csv")
-train <- read_csv("train.csv")
-submit_example <- read_csv("sample_submission.csv")
 
-```
 
-**Check variables** in test and train with `names()`. 
 
-```{r}
-names(train)
-```
-
-Notice that there is no SalePrice in test.  Why??
-
-```{r}
-names(test) 
-```
-
-**Template for the submission.** Must match this exactly!
-
-```{r}
-head(submit_example) 
 ```
 
 ## Factor levels in categorical predictors
@@ -119,216 +210,14 @@ predict(yrbuilt_model, newdata = test) %>%
 
 ```
 
-## Data modeling choices 
 
-Obviously, the model with YearBuilt as a factor is very complicated, with f - 1 coefficients.  This allows the model to fit the data non-linearly, with a separate fit for each year.
 
-```{r}
-ggplot(train, aes(factor(YearBuilt), SalePrice))+
-  geom_boxplot() +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5)) +
-  labs("SalePrice ~ YearBuilt", x = "YearBuilt")
 
-```
 
-Notice what happens when we treat YearBuilt as an integer in the model.
 
-```{r}
-(model <- lm(SalePrice ~ YearBuilt, data = train)) %>% 
-  summary
 
-```
 
-We get just one coefficient, which assumes that an increase of 1 unit is associated with a fixed (linear) change in y across all the years. 
 
-```{r}
-
-ggplot(train, aes(YearBuilt, SalePrice))+
-  geom_jitter() +
-  theme_minimal() +
-  geom_smooth(method = "lm", se = F) +
-  theme(axis.text.x = element_text(angle = 90, hjust = 1, size = 5)) +
-  labs("SalePrice ~ YearBuilt", x = "YearBuilt")
-```
-
-Which is better?  It is a tradeoff:
-
-- More coefficients = better and more flexible fit. Higher R-Squared but could be overfitting the training set.
-- Fewer coefficients = less flexible fit. Lower R-squared but might generalize well to new data.
-
-## Kaggle submission
-
-Code to set up the submission file:
-
-```{r}
-submit <- test %>% 
-  select(Id) %>% 
-  mutate(SalePrice = predict(model, newdata = test))
-
-head(submit)
-```
-
-```{r}
-
-head(submit_example)
-```
-
-
-## Attempting to identify variables with NAs so we can ignore them (this is new material not part of Jeff's template stuff above)
-
-I can't figure out a cool way to find all the variables that have NAs in them. I tried using:
-
-table(train$Id, useNA = "always")
-
-to view tables of each variable, but there are 81 variables and this is a very tedious approach.  
-
-I think it may be best to propose a model, run it, and if it doesn't run because of NAs in one of the variables, we just ditch that variable from further consideration.
-
-So I guess the point we are at is trying find the best five variables to include in a model until we get one that has R-squared > 0.75
-
-There are just way too many variables in this dataset...
-
-
-```{r}
-
-# train dataset has 2 illegal colnames: 1stFlrSF and 2ndFlrSF, update colnames for dataset
-
-
-colnames(train) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFrontage",   "LotArea",       "Street",        "Alley",         "LotShape", "LandContour" ,  "Utilities" ,    "LotConfig",     "LandSlope",     "Neighborhood",  "Condition1",    "Condition2",    "BldgType", "HouseStyle" ,   "OverallQual",   "OverallCond",   "YearBuilt"    , "YearRemodAdd" , "RoofStyle",     "RoofMatl",      "Exterior1st", "Exterior2nd",   "MasVnrType",    "MasVnrArea",    "ExterQual",     "ExterCond",     "Foundation",    "BsmtQual",      "BsmtCond","BsmtExposure",  "BsmtFinType1",  "BsmtFinSF1",    "BsmtFinType2",  "BsmtFinSF2",    "BsmtUnfSF",     "TotalBsmtSF" ,  "Heating", "HeatingQC",     "CentralAir" ,   "Electrical"   , "FirstFlrSF" ,     "SecondFlrSF" ,     "LowQualFinSF",  "GrLivArea",     "BsmtFullBath",  "BsmtHalfBath",  "FullBath",      "HalfBath",      "BedroomAbvGr",  "KitchenAbvGr",  "KitchenQual",   "TotRmsAbvGrd",  "Functional",   
-"Fireplaces",    "FireplaceQu",   "GarageType",    "GarageYrBlt",   "GarageFinish",  "GarageCars",    "GarageArea",    "GarageQual",   
-"GarageCond",    "PavedDrive",    "WoodDeckSF",    "OpenPorchSF",   "EnclosedPorch", "3SsnPorch",     "ScreenPorch",   "PoolArea",      "PoolQC",        "Fence"       ,  "MiscFeature",   "MiscVal"     ,  "MoSold"  ,      "YrSold"  ,      "SaleType"    ,  "SaleCondition", "SalePrice")
-
-colnames(train)
-
-
-# same thing for test (minus sales price) so it will evaluate properly
-
-colnames(test) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFrontage",   "LotArea",       "Street",        "Alley",         "LotShape", "LandContour" ,  "Utilities" ,    "LotConfig",     "LandSlope",     "Neighborhood",  "Condition1",    "Condition2",    "BldgType", "HouseStyle" ,   "OverallQual",   "OverallCond",   "YearBuilt"    , "YearRemodAdd" , "RoofStyle",     "RoofMatl",      "Exterior1st", "Exterior2nd",   "MasVnrType",    "MasVnrArea",    "ExterQual",     "ExterCond",     "Foundation",    "BsmtQual",      "BsmtCond","BsmtExposure",  "BsmtFinType1",  "BsmtFinSF1",    "BsmtFinType2",  "BsmtFinSF2",    "BsmtUnfSF",     "TotalBsmtSF" ,  "Heating", "HeatingQC",     "CentralAir" ,   "Electrical"   , "FirstFlrSF" ,     "SecondFlrSF" ,     "LowQualFinSF",  "GrLivArea",     "BsmtFullBath",  "BsmtHalfBath",  "FullBath",      "HalfBath",      "BedroomAbvGr",  "KitchenAbvGr",  "KitchenQual",   "TotRmsAbvGrd",  "Functional",   
-"Fireplaces",    "FireplaceQu",   "GarageType",    "GarageYrBlt",   "GarageFinish",  "GarageCars",    "GarageArea",    "GarageQual",   
-"GarageCond",    "PavedDrive",    "WoodDeckSF",    "OpenPorchSF",   "EnclosedPorch", "3SsnPorch",     "ScreenPorch",   "PoolArea",      "PoolQC",        "Fence"       ,  "MiscFeature",   "MiscVal"     ,  "MoSold"  ,      "YrSold"  ,      "SaleType"    ,  "SaleCondition")
-
-colnames(train) == colnames(test)
-```
-
-
-#GarageArea Cleanup
-```{r}
-#ran into an error submitting the test file - looks like testID 2577 has an NA for Garage Area - I changed this to a 0
-
-#Before
-test %>%
-  select(Id,GarageArea) %>%
-  filter(Id == 2577)
-
-
-test <- test %>%
-  mutate(GarageArea = ifelse(is.na(GarageArea), 0, GarageArea))
-
-#After
-test %>%
-  select(Id,GarageArea) %>%
-  filter(Id == 2577)
-
-
-```
-
-
-
-```{r}
-# Gonna attempt to combine the square footage fields
-# Total_SQFT = Total Finished Square Footage =  FirstFlrSF + SecondFlrSF + BsmtFinSF1 + BsmtFinSF2
-
-(train <- train %>%
-  mutate(Total_SQFT = (FirstFlrSF + SecondFlrSF +  BsmtFinSF1 + BsmtFinSF2)))
-
-(test <- test %>%
-  mutate(Total_SQFT = (FirstFlrSF + SecondFlrSF +  BsmtFinSF1 + BsmtFinSF2)))
-
-head(train$Total_SQFT)
-
-head(test$Total_SQFT)
-```
-
-
-
-```{r}
-
-submit_model <- lm(SalePrice ~ Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea, data=train)
-summary (submit_model)
-
-
-
-
-# BldgType 0.03
-# LotArea 0.06
-# Neighborhood 0.538
-# HouseStyle 0.08
-# YearBuilt 0.27
-# FirstFlrSF 0.37
-# SecondFlrSF 0.1
-# TotalBsmtSF 0.38
-# TotRmsAbvGrd 0.28
-# GarageArea 0.38
-# 
-# Neighborhood + YearBuilt 0.55
-# Neighborhood + YearBuilt + LotArea = 0.59
-# Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF 0.76
-# Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + TotalBsmtSF 0.77
-# Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + TotRmsAbvGrd 0.76
-# Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea 0.77
-# Neighborhood + YearBuilt +  + Total_SQFT + GarageArea 0.75
-
-
-```
-
-
-# export our predictions as a .csv  
-there's probably a better way to do this but in the meantime this should work and we can each swap out our unique file path for the second argument
-source: https://datatofish.com/export-dataframe-to-csv-in-r/
-```{r}
-#code for submitting
-kaggle_submit <- test %>% 
-  select(Id) %>% 
-  mutate(SalePrice = predict(submit_model, newdata = test))
-
-head(kaggle_submit)
-
-
-write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
-
-
-
-#Mike - "C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv"
-
-```
-
-# in-sample and out of sample R2 via caret linear model 
-
-```{r}
-
-# Fit linear model: SalePrice ~ Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea
-
-caret_lm <- train(SalePrice ~ Neighborhood + YearBuilt +  + FirstFlrSF + SecondFlrSF + GarageArea,
-                  data = train,
-                   method = "lm")
-
-caret_lm 
-
-# This is the caret's cross-validation estimate of the model's 
-# out-of-sample performance!  NOT in-sample performance.
-#
-# RMSE      Rsquared   MAE     
-# 39135.43  0.7581681  24985.36
-
-# Here is in-sample performance:
-
-caret_lm %>% 
-  summary
-
-# Residual standard error: 37920 on 1431 degrees of freedom
-# Multiple R-squared:  0.7766,	Adjusted R-squared:  0.7722 
-```
 
 
 
@@ -369,7 +258,3 @@ ggplot(train, aes(SalePrice)) +
 
 
 ```
-
-GOOD BYE
-
-Peace out!
