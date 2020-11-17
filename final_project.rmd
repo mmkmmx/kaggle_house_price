@@ -192,9 +192,6 @@ d1 <- d1 %>%
 
 # QUANTITATIVE VARIABLES
 
-# I tried to use Jeff's code for dummyvars function from caret package (last lecture) but I was getting weird errors and outcomes. If you can figure it out, then go for it. In the mean time, I replaced NAs with 0's.
-# I tried replacing NAs with median in some cases noted below, but the assignments didnt work for some reason that I cant figure out. There arent that many NAs so I figure replacing them with 0's is probably not going to hurt anything downstream.  We can switch strategies if you can figure out how to impute the median values. for some variables, 0 actually makes more sense than the median. 
-
 #dtest %>% 
 #  mutate_all(.funs = is.na) %>% 
 #  summarize_all(.funs = sum) %>%
@@ -215,41 +212,43 @@ d1 <- d1 %>%
 
 dtest <- dtest %>%
   mutate(LotFrontage = ifelse(is.na(LotFrontage),0,LotFrontage),
-         MasVnrArea = ifelse(is.na(MasVnrArea),0,MasVnrArea),
-         BsmtFinSF1 = ifelse(is.na(BsmtFinSF1),0,BsmtFinSF1),
-         BsmtFinSF2 = ifelse(is.na(BsmtFinSF2),0,BsmtFinSF2),
-         BsmtUnfSF = ifelse(is.na(BsmtUnfSF),0,BsmtUnfSF),
-         TotalBsmtSF = ifelse(is.na(TotalBsmtSF),0,TotalBsmtSF),
-         GarageYrBlt = ifelse(is.na(GarageYrBlt),0,GarageYrBlt),
+         MasVnrArea = ifelse(is.na(MasVnrArea),median(MasVnrArea,na.rm=TRUE),MasVnrArea),
+         BsmtFinSF1 = ifelse(is.na(BsmtFinSF1),median(BsmtFinSF1,nar.rm=TRUE),BsmtFinSF1),
+         BsmtFinSF2 = ifelse(is.na(BsmtFinSF2),median(BsmtFinSF2,na.rm=TRUE),BsmtFinSF2),
+         BsmtUnfSF = ifelse(is.na(BsmtUnfSF),median(BsmtUnfSF,na.rm=TRUE),BsmtUnfSF),
+         TotalBsmtSF = ifelse(is.na(TotalBsmtSF),median(TotalBsmtSF,na.rm=TRUE),TotalBsmtSF),
+         GarageYrBlt = ifelse(is.na(GarageYrBlt),median(GarageYrBlt,na.rm=TRUE),GarageYrBlt),
          GarageCars = ifelse(is.na(GarageCars),0,GarageCars),
          BsmtFullBath = ifelse(is.na(BsmtFullBath),0,BsmtFullBath),
          BsmtHalfBath = ifelse(is.na(BsmtHalfBath),0,BsmtHalfBath),
-         GarageArea = ifelse(is.na(GarageArea),0,GarageArea))
+         GarageArea = ifelse(is.na(GarageArea),median(GarageArea,na.rm=TRUE),GarageArea))
 
 d1 <- d1 %>%
   mutate(LotFrontage = ifelse(is.na(LotFrontage),0,LotFrontage),
-         MasVnrArea = ifelse(is.na(MasVnrArea),0,MasVnrArea),
-         BsmtFinSF1 = ifelse(is.na(BsmtFinSF1),0,BsmtFinSF1),
-         BsmtFinSF2 = ifelse(is.na(BsmtFinSF2),0,BsmtFinSF2),
-         BsmtUnfSF = ifelse(is.na(BsmtUnfSF),0,BsmtUnfSF),
-         TotalBsmtSF = ifelse(is.na(TotalBsmtSF),0,TotalBsmtSF),
-         GarageYrBlt = ifelse(is.na(GarageYrBlt),0,GarageYrBlt),
+         MasVnrArea = ifelse(is.na(MasVnrArea),median(MasVnrArea,na.rm=TRUE),MasVnrArea),
+         BsmtFinSF1 = ifelse(is.na(BsmtFinSF1),median(BsmtFinSF1,na.rm=TRUE),BsmtFinSF1),
+         BsmtFinSF2 = ifelse(is.na(BsmtFinSF2),median(BsmtFinSF2,na.rm=TRUE),BsmtFinSF2),
+         BsmtUnfSF = ifelse(is.na(BsmtUnfSF),median(BsmtUnfSF,na.rm=TRUE),BsmtUnfSF),
+         TotalBsmtSF = ifelse(is.na(TotalBsmtSF),median(TotalBsmtSF,na.rm=TRUE),TotalBsmtSF),
+         GarageYrBlt = ifelse(is.na(GarageYrBlt),median(GarageYrBlt,na.rm=TRUE),GarageYrBlt),
          GarageCars = ifelse(is.na(GarageCars),0,GarageCars),
          BsmtFullBath = ifelse(is.na(BsmtFullBath),0,BsmtFullBath),
          BsmtHalfBath = ifelse(is.na(BsmtHalfBath),0,BsmtHalfBath),
-         GarageArea = ifelse(is.na(GarageArea),0,GarageArea))
+         GarageArea = ifelse(is.na(GarageArea),median(GarageArea,na.rm=TRUE),GarageArea))
 
+# the above strategy gets rid of all NAs except for BsmtFinSF1[661] in dtest dataset still has an NA for some reason..
 
-d1 %>% 
-  mutate_all(.funs = is.na) %>% 
-  summarize_all(.funs = sum) %>%
-  t()
+dtest$BsmtFinSF1[661] = median(dtest$BsmtFinSF1,na.rm=TRUE)
 
-dtest %>% 
-  mutate_all(.funs = is.na) %>% 
-  summarize_all(.funs = sum) %>%
-  t()
+#d1 %>% 
+#  mutate_all(.funs = is.na) %>% 
+#  summarize_all(.funs = sum) %>%
+#  t()
 
+#dtest %>% 
+#  mutate_all(.funs = is.na) %>% 
+#  summarize_all(.funs = sum) %>%
+#  t()
 
 
 ```
