@@ -103,46 +103,155 @@ caret_lm %>%
 ```{r}
 
 # show NA counts for all variables, use test dataset for counts, but assign same solution to both datasets
+#dtest %>% 
+#  mutate_all(.funs = is.na) %>% 
+#  summarize_all(.funs = sum) %>%
+#  t()
+
+# see what each variable looks like, one at a time:
+#table(d1$Electrical)
+#table(dtest$Electrical)
+
+# For categorical variables, we will replace NAs with 'none'
+#
+#    Categorical variables...
+# Alley:        1352  categorical - replace NAs with 'none'
+# Utilities:       2  categorical - replace NAs with 'none' 
+# Exterior1st:     1  categorical - replace NAs with 'none' 
+# Exterior2nd:     1  categorical - replace NAs with 'none'
+# MasVnrType:     16  categorical - replace NAs with 'none'
+# BsmtQual        44  categorical - replace NAs with 'none'
+# BsmtCond        45  categorical - replace NAs with 'none'
+# BsmtExposure    44  categorical - replace NAs with 'none'
+# BsmtFinType1    42  categorical - replace NAs with 'none'
+# BsmtFinType2    42  categorical - replace NAs with 'none'
+# KitchenQual      1  categorical - replace NAs with 'none'
+# Functional       2  categorical - replace NAs with 'none'
+# FireplaceQu    730  categorical - replace NAs with 'none'
+# GarageType      76  categorical - replace NAs with 'none'
+# GarageFinish    78  categorical - replace NAs with 'none'
+# GarageQual      78  categorical - replace NAs with 'none'
+# GarageCond      78  categorical - replace NAs with 'none'
+# PoolQC        1456  categorical - replace NAs with 'none'
+# Fence         1169  categorical - replace NAs with 'none'
+# MiscFeature   1408  categorical - replace NAs with 'none'
+# SaleType         1  categorical - replace NAs with 'none'
+# MSZoning         4  categorical - replace NAs with 'none'
+
+dtest <- dtest %>%
+  mutate(Alley = ifelse(is.na(Alley), "none", Alley),
+         Utilities = ifelse(is.na(Utilities),"none",Utilities),
+         Exterior1st = ifelse(is.na(Exterior1st),"none",Exterior1st),
+         Exterior2nd = ifelse(is.na(Exterior2nd),"none",Exterior2nd),
+         MasVnrType = ifelse(is.na(MasVnrType),"none",MasVnrType),
+         BsmtQual = ifelse(is.na(BsmtQual),"none",BsmtQual),
+         BsmtCond = ifelse(is.na(BsmtCond),"none",BsmtCond),
+         BsmtExposure = ifelse(is.na(BsmtExposure),"none",BsmtExposure),
+         BsmtFinType1 = ifelse(is.na(BsmtFinType1),"none",BsmtFinType1),
+         BsmtFinType2 = ifelse(is.na(BsmtFinType2),"none",BsmtFinType2),
+         KitchenQual = ifelse(is.na(KitchenQual),"none",KitchenQual),
+         Functional = ifelse(is.na(Functional),"none",Functional),
+         FireplaceQu = ifelse(is.na(FireplaceQu),"none",FireplaceQu),
+         GarageType = ifelse(is.na(GarageType),"none",GarageType),
+         GarageFinish = ifelse(is.na(GarageFinish),"none",GarageFinish),
+         GarageQual = ifelse(is.na(GarageQual),"none",GarageQual),
+         GarageCond = ifelse(is.na(GarageCond),"none",GarageCond),
+         PoolQC = ifelse(is.na(PoolQC),"none",PoolQC),
+         Fence = ifelse(is.na(Fence),"none",Fence),
+         MiscFeature = ifelse(is.na(MiscFeature),"none",MiscFeature),
+         SaleType = ifelse(is.na(SaleType),"none",SaleType),
+         MSZoning = ifelse(is.na(MSZoning),"none",MSZoning),
+         Electrical = ifelse(is.na(Electrical),"none",Electrical))
+         
+d1 <- d1 %>%
+  mutate(Alley = ifelse(is.na(Alley), "none", Alley),
+         Utilities = ifelse(is.na(Utilities),"none",Utilities),
+         Exterior1st = ifelse(is.na(Exterior1st),"none",Exterior1st),
+         Exterior2nd = ifelse(is.na(Exterior2nd),"none",Exterior2nd),
+         MasVnrType = ifelse(is.na(MasVnrType),"none",MasVnrType),
+         BsmtQual = ifelse(is.na(BsmtQual),"none",BsmtQual),
+         BsmtCond = ifelse(is.na(BsmtCond),"none",BsmtCond),
+         BsmtExposure = ifelse(is.na(BsmtExposure),"none",BsmtExposure),
+         BsmtFinType1 = ifelse(is.na(BsmtFinType1),"none",BsmtFinType1),
+         BsmtFinType2 = ifelse(is.na(BsmtFinType2),"none",BsmtFinType2),
+         KitchenQual = ifelse(is.na(KitchenQual),"none",KitchenQual),
+         Functional = ifelse(is.na(Functional),"none",Functional),
+         FireplaceQu = ifelse(is.na(FireplaceQu),"none",FireplaceQu),
+         GarageType = ifelse(is.na(GarageType),"none",GarageType),
+         GarageFinish = ifelse(is.na(GarageFinish),"none",GarageFinish),
+         GarageQual = ifelse(is.na(GarageQual),"none",GarageQual),
+         GarageCond = ifelse(is.na(GarageCond),"none",GarageCond),
+         PoolQC = ifelse(is.na(PoolQC),"none",PoolQC),
+         Fence = ifelse(is.na(Fence),"none",Fence),
+         MiscFeature = ifelse(is.na(MiscFeature),"none",MiscFeature),
+         SaleType = ifelse(is.na(SaleType),"none",SaleType),
+         MSZoning = ifelse(is.na(MSZoning),"none",MSZoning),
+         Electrical = ifelse(is.na(Electrical),"none",Electrical))
+
+
+
+# QUANTITATIVE VARIABLES
+
+# I tried to use Jeff's code for dummyvars function from caret package (last lecture) but I was getting weird errors and outcomes. If you can figure it out, then go for it. In the mean time, I replaced NAs with 0's.
+# I tried replacing NAs with median in some cases noted below, but the assignments didnt work for some reason that I cant figure out. There arent that many NAs so I figure replacing them with 0's is probably not going to hurt anything downstream.  We can switch strategies if you can figure out how to impute the median values. for some variables, 0 actually makes more sense than the median. 
 
 #dtest %>% 
 #  mutate_all(.funs = is.na) %>% 
 #  summarize_all(.funs = sum) %>%
 #  t()
 
-# Decisions...
-#                     
-# LotFrontage:   227  quantitative - replace NAs with 0
-# Alley:        1352  categorical - replace NAs with 'noAlley'
-# Utilities:       2  categorical - I think we should remove this variable, it has no variability to it
-# Exterior1st:     1  categorical - replace NAs with 'none' 
-# Exterior2nd:     1  categorical - replace NAs with 'none'
-# MasVnrType:     16  categorical - replace NAs with 'none'
-# MasVnrArea:     15  quantitative - replace NAs with median
-# BsmtQual        44  categorical - replace NAs with 'None'
-# BsmtCond        45  categorical - replace NAs with 'None'
-# BsmtExposure    44  categorical - replace NAs with 'None'
-# BsmtFinType1    42  categorical - replace NAs with 'None'
+#    Quantitative variables...
+# LotFrontage    227  quantitative - replace NAs with 0
+# MasVnrArea      15  quantitative - replace NAs with median
 # BsmtFinSF1       1  quantitative - replace NAs with median
-# BsmtFinType2    42  categorical - replace NAs with 'None'
 # BsmtFinSF2       1  quantitative - replace NAs with median
 # BsmtUnfSF        1  quantitative - replace NAs with median
 # TotalBsmtSF      1  quantitative - replace NAs with median
-# KitchenQual      1  categorical - replace NAs with 'None'
-# Functional       2  categorical - replace NAs with 'None'
-# FireplaceQu    730  categorical - replace NAs with 'None'
-# GarageType      76  categorical - replace NAs with 'None'
 # GarageYrBlt     78  quantitative - replace NAs with median
-# GarageFinish    78  categorical - replace NAs with 'None'
 # GarageCars       1  quantitative - replace NAs with 0
-# GarageQual      78  categorical - replace NAs with 'None'
-# GarageCond      78  categorical - replace NAs with 'None'
-# PoolQC        1456  categorical - replace NAs with 'None'
-# Fence         1169  categorical - replace NAs with 'None'
-# MiscFeature   1408  categorical - replace NAs with 'None'
-# SaleType         1  categorical - replace NAs with 'None'
+# BsmtFullBath     2    quantitative - replace NAs with 0
+# BsmtHalfBath     2    quantitative - replace NAs with 0
+# GarageArea       1    quantitative - replace NAs with median
 
-table(dtest$SaleType)  # <-- see what each variable looks like, one at a time
-table(dtest$SaleType)  # <-- see what each variable looks like, one at a time
+dtest <- dtest %>%
+  mutate(LotFrontage = ifelse(is.na(LotFrontage),0,LotFrontage),
+         MasVnrArea = ifelse(is.na(MasVnrArea),0,MasVnrArea),
+         BsmtFinSF1 = ifelse(is.na(BsmtFinSF1),0,BsmtFinSF1),
+         BsmtFinSF2 = ifelse(is.na(BsmtFinSF2),0,BsmtFinSF2),
+         BsmtUnfSF = ifelse(is.na(BsmtUnfSF),0,BsmtUnfSF),
+         TotalBsmtSF = ifelse(is.na(TotalBsmtSF),0,TotalBsmtSF),
+         GarageYrBlt = ifelse(is.na(GarageYrBlt),0,GarageYrBlt),
+         GarageCars = ifelse(is.na(GarageCars),0,GarageCars),
+         BsmtFullBath = ifelse(is.na(BsmtFullBath),0,BsmtFullBath),
+         BsmtHalfBath = ifelse(is.na(BsmtHalfBath),0,BsmtHalfBath),
+         GarageArea = ifelse(is.na(GarageArea),0,GarageArea))
+
+d1 <- d1 %>%
+  mutate(LotFrontage = ifelse(is.na(LotFrontage),0,LotFrontage),
+         MasVnrArea = ifelse(is.na(MasVnrArea),0,MasVnrArea),
+         BsmtFinSF1 = ifelse(is.na(BsmtFinSF1),0,BsmtFinSF1),
+         BsmtFinSF2 = ifelse(is.na(BsmtFinSF2),0,BsmtFinSF2),
+         BsmtUnfSF = ifelse(is.na(BsmtUnfSF),0,BsmtUnfSF),
+         TotalBsmtSF = ifelse(is.na(TotalBsmtSF),0,TotalBsmtSF),
+         GarageYrBlt = ifelse(is.na(GarageYrBlt),0,GarageYrBlt),
+         GarageCars = ifelse(is.na(GarageCars),0,GarageCars),
+         BsmtFullBath = ifelse(is.na(BsmtFullBath),0,BsmtFullBath),
+         BsmtHalfBath = ifelse(is.na(BsmtHalfBath),0,BsmtHalfBath),
+         GarageArea = ifelse(is.na(GarageArea),0,GarageArea))
+
+
+d1 %>% 
+  mutate_all(.funs = is.na) %>% 
+  summarize_all(.funs = sum) %>%
+  t()
+
+dtest %>% 
+  mutate_all(.funs = is.na) %>% 
+  summarize_all(.funs = sum) %>%
+  t()
+
+
+
 ```
 
 ## Data issue 2: factor variables
