@@ -262,7 +262,11 @@ dtest$BsmtFinSF1[661] = median(dtest$BsmtFinSF1,na.rm=TRUE)
 
 #summary(d1)
 
-# variables that should be treated as factors are:
+# variables that should be treated as factors are below. 
+
+# Right now, they are coded as factors that will each have many levels represented as distinct variables in the model. We could recode them to integers (not really sure how to do that) and in that case they would be treated as one variable per factor variable. You can give it a try if you can figure out how to do that. 
+
+# the benefit of recoding them as integers would be fewer variables in the model, therefore higher bias but lower variance in the external dataset. As it is, models that use these variables will have lower bias but higher variance in the external dataset.
 
 d1 <- d1 %>%
 mutate(MSZoning = factor(MSZoning),
@@ -362,9 +366,33 @@ mutate(MSZoning = factor(MSZoning),
 
 ```{r}
 
+count_levels <- function(x) unique(x) %>%  length
+
+
+test_levels <- d1 %>% 
+  count_levels
+test_levels
+  
+#  summarize_if(is.character, .funs = count_levels) %>% 
+#  t()
+#test_levels
+
+#train_levels <- dtest %>% 
+#  summarize_if(is.character, .funs = count_levels) %>% 
+#  t()
+#train_levels
+
+#data.frame(variables = row.names(test_levels),
+#           test_levels, 
+#           train_levels) %>% 
+#  mutate(problem = ifelse(test_levels != train_levels, "problem", "OK"))
 
 
 ```
+
+
+
+
 
 ## Factor levels in categorical predictors
 
