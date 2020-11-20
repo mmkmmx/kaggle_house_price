@@ -310,7 +310,8 @@ mutate(MSZoning = factor(MSZoning),
        Fence = factor(Fence),
        MiscFeature = factor(MiscFeature),
        SaleType = factor(SaleType),
-       SaleCondition = factor(SaleCondition))
+       SaleCondition = factor(SaleCondition),
+       HeatingQC = factor(HeatingQC))
 
 dtest <- dtest %>%
 mutate(MSZoning = factor(MSZoning),
@@ -354,7 +355,8 @@ mutate(MSZoning = factor(MSZoning),
        Fence = factor(Fence),
        MiscFeature = factor(MiscFeature),
        SaleType = factor(SaleType),
-       SaleCondition = factor(SaleCondition))
+       SaleCondition = factor(SaleCondition),
+       HeatingQC = factor(HeatingQC))
 
 
 ```
@@ -369,23 +371,18 @@ mutate(MSZoning = factor(MSZoning),
 count_levels <- function(x) unique(x) %>%  length
 
 
-test_levels <- d1 %>% 
-  count_levels
-test_levels
-  
-#  summarize_if(is.character, .funs = count_levels) %>% 
-#  t()
-#test_levels
+test_levels <- d1 %>%
+  summarize_if(is.factor, .funs = count_levels) %>% 
+  t()
 
-#train_levels <- dtest %>% 
-#  summarize_if(is.character, .funs = count_levels) %>% 
-#  t()
-#train_levels
+train_levels <- dtest %>% 
+  summarize_if(is.factor, .funs = count_levels) %>% 
+  t()
 
-#data.frame(variables = row.names(test_levels),
-#           test_levels, 
-#           train_levels) %>% 
-#  mutate(problem = ifelse(test_levels != train_levels, "problem", "OK"))
+data.frame(variables = row.names(test_levels),
+           test_levels, 
+           train_levels) %>% 
+  mutate(problem = ifelse(test_levels != train_levels, "problem", "OK"))
 
 
 ```
