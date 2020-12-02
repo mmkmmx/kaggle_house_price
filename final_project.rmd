@@ -3,8 +3,12 @@ title: "final_project"
 author: "Mike Marett, Craig Teerlink, Belu Chik"
 output: html_document
 ---
+## Useful Resources
+https://www.kaggle.com/erikbruin/house-prices-lasso-xgboost-and-a-detailed-eda
 
 
+
+## SETUP
 ```{r setup, include=FALSE}
 
 knitr::opts_chunk$set(echo = TRUE)
@@ -36,67 +40,8 @@ colnames(dtest) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFron
 
 ```
 
-## Code used for the interim report 
-
-#GarageArea Cleanup
-```{r}
-
-#ran into an error submitting the test file - looks like testID 2577 has an NA for Garage Area - I changed this to a 0
-
-dtest <- dtest %>%
-  mutate(GarageArea = ifelse(is.na(GarageArea), 0, GarageArea))
-
-# Combine the square footage fields:
-# Total_SQFT =  FirstFlrSF + SecondFlrSF + BsmtFinSF1 + BsmtFinSF2   <-- we did not use TotalSQFT in our submitted model
-
-#d1 <- d1 %>%
-#  mutate(Total_SQFT = (FirstFlrSF + SecondFlrSF +  BsmtFinSF1 + BsmtFinSF2))
-#head(d1$Total_SQFT)
-#head(dtest$Total_SQFT)
-
-submit_model <- lm(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea, data=d1)
-summary (submit_model)
-
-# export our predictions as a .csv  
-
-kaggle_submit <- dtest %>% 
-  select(Id) %>% 
-  mutate(SalePrice = predict(submit_model, newdata = dtest))
-
-#head(kaggle_submit)
-
-#write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
-#     <-- I cannot write to this file
-
-#Mike - "C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv"
-
-# In-sample and out of sample R2 via caret linear model 
-
-# Fit linear model: SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea
-
-caret_lm <- train(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea,
-                  data = d1,
-                   method = "lm")
-
-caret_lm 
-
-# This is the caret's cross-validation estimate of the model's 
-# out-of-sample performance!  NOT in-sample performance.
-#
-# RMSE      Rsquared   MAE     
-# 39076     0.7521927  24985.36
-
-# Here is in-sample performance:
-
-caret_lm %>% 
-  summary
-
-# Residual standard error: 37920 on 1431 degrees of freedom
-# Multiple R-squared:  0.7766,	Adjusted R-squared:  0.7722
-
-```
-
-## Data issue 1: NAs 
+## CLEANUP
+### Data issue 1: NAs 
 
     + NAs.  If there are missing values among the test set predictors, predict() will produce an NA.  Kaggle won't like that! *Stop and think*:  have you coded the NAs appropriately? For example, `alley` has a bunch of NAs, but in that case NA does not mean missing data but instead means: no alley.  The appropriate action is to recode NAs in `alley` as "none."
 
@@ -250,10 +195,11 @@ dtest$BsmtFinSF1[661] = median(dtest$BsmtFinSF1,na.rm=TRUE)
 #  summarize_all(.funs = sum) %>%
 #  t()
 
+head(d1$Alley)
 
 ```
 
-## Data issue 2: factor variables
+### Data issue 2: factor variables
 
     Data modeling.  Should a variable be treated as an integer or a factor?  Example 1:  The quality variables have levels (poor, fair, average, good, excellent).  These could be represented as integers, 1 - 5. Example 2:  YearBuilt is a year, which could be treated as a factor or an integer.  Consider:  factors will create a more complicated and specific model with many f - 1 coefficients, where f is the number of factor levels. Coding factors as integers will produce just one coefficient, but assumes a linear relationship between predictor and outcome. What is at stake in this assumption?---that the relationship between predictor and outcome is constant from level to level.  There is an illustration of this issue below.
 
@@ -361,7 +307,7 @@ mutate(MSZoning = factor(MSZoning),
 
 ```
 
-## Data issue 3: missing factor levels between test and train data
+### Data issue 3: missing factor levels between test and train data
 
     + Missing factor levels. The predict() function must find exactly the same columns/factor levels in the new data as in the data used to fit the model. So if there is a factor level in the train set that is not in the test set then you will not be able to use your model to predict. Example:  YearBuilt as a factor has some levels in the train set that do not exist in the test set.  In such a case you cannot use the your model for prediction--- it will produce an error.
 
@@ -387,101 +333,139 @@ data.frame(variables = row.names(test_levels),
 
 ```
 
-
-
-
-
-## Factor levels in categorical predictors
-
-Check factor levels for Neighborhood in test and train.
-
+### Data Issue 4: Numeric variables that are actually categories and need to be converted to factors
 ```{r}
+#MSSubClass is the type of home and MoSold is the month it was sold, both are categorical in nature
 
-factor(train$Neighborhood) %>% levels
-```
-
-```{r}
-factor(test$Neighborhood) %>% levels
+d1 <- d1 %>%
+mutate(MSSubClass = factor(MSSubClass),
+       MoSold = factor(MoSold))
+       
+dtest <- dtest %>%
+mutate(MSSubClass = factor(MSSubClass),
+       MoSold = factor(MoSold))
 
 ```
-
-They appear to be the same.  For contrast, check factor levels in YearBuilt.
-
+###GarageArea Cleanup
 ```{r}
-factor(train$YearBuilt) %>% levels
+
+#ran into an error submitting the test file - looks like testID 2577 has an NA for Garage Area - I changed this to a 0
+
+dtest <- dtest %>%
+  mutate(GarageArea = ifelse(is.na(GarageArea), 0, GarageArea))
+
+# Combine the square footage fields:
+# Total_SQFT =  FirstFlrSF + SecondFlrSF + BsmtFinSF1 + BsmtFinSF2   <-- we did not use TotalSQFT in our submitted model
+
+#d1 <- d1 %>%
+#  mutate(Total_SQFT = (FirstFlrSF + SecondFlrSF +  BsmtFinSF1 + BsmtFinSF2))
+#head(d1$Total_SQFT)
+#head(dtest$Total_SQFT)
+
 ```
 
+## Column Manipulation 
+section for combining/adding/removing columns from the original dataset
 ```{r}
+#Age = create a column to calculate the age at time of sale
+#TotBath = create a column to combine bathrooms variables into a single variable
 
-factor(test$YearBuilt) %>% levels
+d1 <- d1 %>%
+  mutate(Age = (YrSold - YearRemodAdd),
+         TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)))
+
+dtest <- dtest %>%
+  mutate(Age = (YrSold - YearRemodAdd),
+          TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)))
+
 ```
 
-Different! Some of the test levels are not in train and vice versa.
 
-This will prevent a model developed with the train set from using the test set to predict.  Observe:
 
+columns to remove/ignore
 ```{r}
-(yrbuilt_model <- lm(SalePrice ~ factor(YearBuilt), data = train)) %>% 
+#GrLivArea appears to be a summation of (FirstFlrSF, SecondFlrSF, LowQualFinSF)
+
+mean(d1$GrLivArea == (d1$FirstFlrSF+d1$SecondFlrSF+d1$LowQualFinSF))
+mean(dtest$GrLivArea == (dtest$FirstFlrSF+dtest$SecondFlrSF+dtest$LowQualFinSF))
+
+
+```
+
+
+
+
+
+## Alternate Models
+```{r}
+#Linear Regression
+#lm(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea, data=d1)
+
+
+
+
+
+```
+
+
+#Caret cross-validation
+```{r}
+# In-sample and out of sample R2 via caret linear model 
+
+# Fit linear model: SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea
+
+caret_lm <- train(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea,
+                  data = d1,
+                   method = "lm")
+
+caret_lm 
+
+# This is the caret's cross-validation estimate of the model's 
+# out-of-sample performance!  NOT in-sample performance.
+#
+# RMSE      Rsquared   MAE     
+# 39076     0.7521927  24985.36
+
+# Here is in-sample performance:
+
+caret_lm %>% 
   summary
 
-predict(yrbuilt_model, newdata = test)
-```
-
-It is possible to fix this problem by manually setting the levels in test to match those in train.
-
-```{r}
-test$YearBuilt <- factor(test$YearBuilt, levels = c(factor(train$YearBuilt) %>% levels))
-
-predict(yrbuilt_model, newdata = test) %>% 
-  head
+# Residual standard error: 37920 on 1431 degrees of freedom
+# Multiple R-squared:  0.7766,	Adjusted R-squared:  0.7722
 
 ```
 
 
 
-
-
-
-
-
-
-
-
-
-# some plots for after interim report
-
+##Kaggle Submission
 ```{r}
 
-#plot SalePrice by 1st floor square feet
+submit_model <- lm(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea, data=d1)
+summary (submit_model)
 
-ggplot(train, aes(FirstFlrSF, SalePrice)) +
-  geom_point() +
-  theme_minimal() +
-  stat_smooth(method="lm", se = F) +
-  labs(title = "price ~ 1st floor sqft")
+# export our predictions as a .csv  
 
+kaggle_submit <- dtest %>% 
+  select(Id) %>% 
+  mutate(SalePrice = predict(submit_model, newdata = dtest))
+
+#head(kaggle_submit)
+
+# code to write the csv file to upload in kaggle
+# write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+#     <-- I cannot write to this file
+# Craig/Belu - you'll need to swap out the path to write the file to your computer.  you can just save it in this section that way any of us can generate the file
+
+#Mike - "C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv"
+#Craig - "C:\\????
+#Belu - "c:\\????
 ```
 
-```{r}
-
-#plot SalePrice by 2nd floor square feet
-
-ggplot(train, aes(SecondFlrSF, SalePrice)) +
-  geom_point() +
-  theme_minimal() +
-  stat_smooth(method="lm", se = F) +
-  labs(title = "price ~ 2nd floor sqft")
-
-# THIS VARIABLE IS WEIRD...LOTS OF ZEROES
-
-```
-
-```{r}
-
-#plot SalePrice by YearBuilt...not sure how to make this plot
-
-ggplot(train, aes(SalePrice)) +
-  geom_boxplot()+
 
 
-```
+
+
+
+
+
