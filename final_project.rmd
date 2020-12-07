@@ -195,8 +195,6 @@ dtest$BsmtFinSF1[661] = median(dtest$BsmtFinSF1,na.rm=TRUE)
 #  summarize_all(.funs = sum) %>%
 #  t()
 
-head(d1$Alley)
-
 ```
 
 ### Data issue 2: factor variables
@@ -309,31 +307,51 @@ mutate(MSZoning = factor(MSZoning),
 
 ### Data issue 3: missing factor levels between test and train data
 
-    + Missing factor levels. The predict() function must find exactly the same columns/factor levels in the new data as in the data used to fit the model. So if there is a factor level in the train set that is not in the test set then you will not be able to use your model to predict. Example:  YearBuilt as a factor has some levels in the train set that do not exist in the test set.  In such a case you cannot use the your model for prediction--- it will produce an error.
-
-
 ```{r}
 
-count_levels <- function(x) unique(x) %>%  length
+# code to create a table with problem variables
+#
+#count_levels <- function(x) unique(x) %>%  length
+#test_levels <- d1 %>%
+#  summarize_if(is.factor, .funs = count_levels) %>% 
+#  t()
+#train_levels <- dtest %>% 
+#  summarize_if(is.factor, .funs = count_levels) %>% 
+#  t()
+#data.frame(variables = row.names(test_levels),
+#           test_levels, 
+#           train_levels) %>% 
+#  mutate(problem = ifelse(test_levels != train_levels, "problem", "OK"))
 
+# problem variables:
+#
+# variable  test_levels train_levels
+# ----------------------------------
+# Condition2	8	5
+# HouseStyle	8	7
+# RoofMatl	8	4	
+# Exterior1st	15	14	
+# Heating	6	4
+# Electrical	6	4
+# GarageQual	6	5
+# PoolQC	4	3
+# MiscFeature	5	4
 
-test_levels <- d1 %>%
-  summarize_if(is.factor, .funs = count_levels) %>% 
-  t()
-
-train_levels <- dtest %>% 
-  summarize_if(is.factor, .funs = count_levels) %>% 
-  t()
-
-data.frame(variables = row.names(test_levels),
-           test_levels, 
-           train_levels) %>% 
-  mutate(problem = ifelse(test_levels != train_levels, "problem", "OK"))
-
+# fix: 
+dtest$Condition2 <- factor(dtest$Condition2, levels = c(factor(d1$Condition2) %>% levels))
+dtest$HouseStyle <- factor(dtest$HouseStyle, levels = c(factor(d1$HouseStyle) %>% levels))
+dtest$RoofMatl <- factor(dtest$RoofMatl, levels = c(factor(d1$RoofMatl) %>% levels))
+dtest$Exterior1st <- factor(dtest$Exterior1st, levels = c(factor(d1$Exterior1st) %>% levels))
+dtest$Heating <- factor(dtest$Heating, levels = c(factor(d1$Heating) %>% levels))
+dtest$Electrical <- factor(dtest$Electrical, levels = c(factor(d1$Electrical) %>% levels))
+dtest$GarageQual <- factor(dtest$GarageQual, levels = c(factor(d1$GarageQual) %>% levels))
+dtest$PoolQC <- factor(dtest$PoolQC, levels = c(factor(d1$PoolQC) %>% levels))
+dtest$MiscFeature <- factor(dtest$MiscFeature, levels = c(factor(d1$MiscFeature) %>% levels))
 
 ```
 
 ### Data Issue 4: Numeric variables that are actually categories and need to be converted to factors
+
 ```{r}
 #MSSubClass is the type of home and MoSold is the month it was sold, both are categorical in nature
 
@@ -346,26 +364,88 @@ mutate(MSSubClass = factor(MSSubClass),
        MoSold = factor(MoSold))
 
 ```
-###GarageArea Cleanup
+
+## Plot quantitative explanatory variables. Identify variables that are non-linear and should be log-transformed
+
 ```{r}
 
-#ran into an error submitting the test file - looks like testID 2577 has an NA for Garage Area - I changed this to a 0
 
-dtest <- dtest %>%
-  mutate(GarageArea = ifelse(is.na(GarageArea), 0, GarageArea))
-
-# Combine the square footage fields:
-# Total_SQFT =  FirstFlrSF + SecondFlrSF + BsmtFinSF1 + BsmtFinSF2   <-- we did not use TotalSQFT in our submitted model
-
-#d1 <- d1 %>%
-#  mutate(Total_SQFT = (FirstFlrSF + SecondFlrSF +  BsmtFinSF1 + BsmtFinSF2))
-#head(d1$Total_SQFT)
-#head(dtest$Total_SQFT)
+ggplot(d1,aes(LotFrontage))+
+  geom_histogram()
+ggplot(d1,aes(LotArea))+
+  geom_histogram()
+ggplot(d1,aes(OverallQual))+
+  geom_histogram()
+ggplot(d1,aes(OverallCond))+
+  geom_histogram()
+ggplot(d1,aes(YearBuilt))+
+  geom_histogram()
+ggplot(d1,aes(YearRemodAdd))+
+  geom_histogram()
+ggplot(d1,aes(MasVnrArea))+
+  geom_histogram()
+ggplot(d1,aes(BsmtFinSF1))+
+  geom_histogram()
+ggplot(d1,aes(BsmtFinSF2))+
+  geom_histogram()
+ggplot(d1,aes(BsmtUnfSF))+
+  geom_histogram()
+ggplot(d1,aes(TotalBsmtSF))+
+  geom_histogram()
+ggplot(d1,aes(FirstFlrSF))+
+  geom_histogram()
+ggplot(d1,aes(SecondFlrSF))+
+  geom_histogram()
+ggplot(d1,aes(LowQualFinSF))+
+  geom_histogram()
+ggplot(d1,aes(GrLivArea))+
+  geom_histogram()
+ggplot(d1,aes(BsmtFullBath))+
+  geom_histogram()
+ggplot(d1,aes(BsmtHalfBath))+
+  geom_histogram()
+ggplot(d1,aes(FullBath))+
+  geom_histogram()
+ggplot(d1,aes(HalfBath))+
+  geom_histogram()
+ggplot(d1,aes(BedroomAbvGr))+
+  geom_histogram()
+ggplot(d1,aes(KitchenAbvGr))+
+  geom_histogram()
+ggplot(d1,aes(TotRmsAbvGrd))+
+  geom_histogram()
+ggplot(d1,aes(Fireplaces))+
+  geom_histogram()
+ggplot(d1,aes(GarageYrBlt))+
+  geom_histogram()
+ggplot(d1,aes(GarageCars))+
+  geom_histogram()
+ggplot(d1,aes(GarageArea))+
+  geom_histogram()
+ggplot(d1,aes(WoodDeckSF))+
+  geom_histogram()
+ggplot(d1,aes(OpenPorchSF))+
+  geom_histogram()
+ggplot(d1,aes(PoolArea))+
+  geom_histogram()
+ggplot(d1,aes(YrSold))+
+  geom_histogram()
+ggplot(d1,aes(SalePrice))+
+  geom_histogram()
+ggplot(d1,aes(Age))+
+  geom_histogram()
+ggplot(d1,aes(TotBath))+
+  geom_histogram()
+ 
+# I dont think any of these variables need to be log transformed
 
 ```
 
-## Column Manipulation 
-section for combining/adding/removing columns from the original dataset
+
+
+
+## Column Manipulation: section for combining/adding/removing columns from the original dataset
+
 ```{r}
 #Age = create a column to calculate the age at time of sale
 #TotBath = create a column to combine bathrooms variables into a single variable
@@ -382,7 +462,8 @@ dtest <- dtest %>%
 
 
 
-columns to remove/ignore
+## columns to remove/ignore
+
 ```{r}
 #GrLivArea appears to be a summation of (FirstFlrSF, SecondFlrSF, LowQualFinSF)
 
