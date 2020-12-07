@@ -369,7 +369,6 @@ mutate(MSSubClass = factor(MSSubClass),
 
 ```{r}
 
-
 ggplot(d1,aes(LotFrontage))+
   geom_histogram()
 ggplot(d1,aes(LotArea))+
@@ -438,10 +437,86 @@ ggplot(d1,aes(TotBath))+
   geom_histogram()
  
 # I dont think any of these variables need to be log transformed
+# 
+# what about salePrice? Shouldnt it be log transformed?
+
 
 ```
 
+## Plot SalePrice against the other quant variables...not sure what I'm looking for but wanted to plot them...
 
+
+```{r}
+
+ggplot(d1,aes(LotFrontage, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(LotArea, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(OverallQual, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(OverallCond, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(YearBuilt, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(YearRemodAdd, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(MasVnrArea, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(BsmtFinSF1, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(BsmtFinSF2, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(BsmtUnfSF, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(TotalBsmtSF, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(FirstFlrSF, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(SecondFlrSF, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(LowQualFinSF, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(GrLivArea, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(BsmtFullBath, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(BsmtHalfBath, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(FullBath, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(HalfBath, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(BedroomAbvGr, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(KitchenAbvGr, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(TotRmsAbvGrd, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(Fireplaces, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(GarageYrBlt, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(GarageCars, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(GarageArea, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(WoodDeckSF, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(OpenPorchSF, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(PoolArea, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(YrSold, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(SalePrice, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(Age, SalePrice)) +
+  geom_point()
+ggplot(d1,aes(TotBath, SalePrice)) +
+  geom_point()
+
+# looking for variables that need to be log transformed, or what? 
+```
 
 
 ## Column Manipulation: section for combining/adding/removing columns from the original dataset
