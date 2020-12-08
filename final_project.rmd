@@ -38,6 +38,9 @@ colnames(dtest) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFron
 
 #colnames(d1) == colnames(dtest)
 
+glimpse(d1)
+
+
 ```
 
 ## CLEANUP
@@ -181,9 +184,14 @@ d1 <- d1 %>%
          BsmtHalfBath = ifelse(is.na(BsmtHalfBath),0,BsmtHalfBath),
          GarageArea = ifelse(is.na(GarageArea),median(GarageArea,na.rm=TRUE),GarageArea))
 
+
+
 # the above strategy gets rid of all NAs except for BsmtFinSF1[661] in dtest dataset still has an NA for some reason..
 
 dtest$BsmtFinSF1[661] = median(dtest$BsmtFinSF1,na.rm=TRUE)
+
+#dtest$ID 2152 isn't setting NA for Exterior1st to none
+
 
 #d1 %>% 
 #  mutate_all(.funs = is.na) %>% 
@@ -228,8 +236,8 @@ mutate(MSZoning = factor(MSZoning),
        HouseStyle = factor(HouseStyle),
        RoofStyle = factor(RoofStyle),
        RoofMatl = factor(RoofMatl),
-       Exterior1st = factor(Exterior1st),
-       Exterior2nd = factor(Exterior2nd),
+     Exterior1st = factor(Exterior1st),
+      Exterior2nd = factor(Exterior2nd),
        MasVnrType = factor(MasVnrType),
        ExterQual = factor(ExterQual),
        ExterCond = factor(ExterCond),
@@ -313,7 +321,7 @@ mutate(MSZoning = factor(MSZoning),
 #
 #count_levels <- function(x) unique(x) %>%  length
 #test_levels <- d1 %>%
-#  summarize_if(is.factor, .funs = count_levels) %>% 
+ # summarize_if(is.factor, .funs = count_levels) %>% 
 #  t()
 #train_levels <- dtest %>% 
 #  summarize_if(is.factor, .funs = count_levels) %>% 
@@ -341,12 +349,36 @@ mutate(MSZoning = factor(MSZoning),
 dtest$Condition2 <- factor(dtest$Condition2, levels = c(factor(d1$Condition2) %>% levels))
 dtest$HouseStyle <- factor(dtest$HouseStyle, levels = c(factor(d1$HouseStyle) %>% levels))
 dtest$RoofMatl <- factor(dtest$RoofMatl, levels = c(factor(d1$RoofMatl) %>% levels))
-dtest$Exterior1st <- factor(dtest$Exterior1st, levels = c(factor(d1$Exterior1st) %>% levels))
 dtest$Heating <- factor(dtest$Heating, levels = c(factor(d1$Heating) %>% levels))
 dtest$Electrical <- factor(dtest$Electrical, levels = c(factor(d1$Electrical) %>% levels))
 dtest$GarageQual <- factor(dtest$GarageQual, levels = c(factor(d1$GarageQual) %>% levels))
 dtest$PoolQC <- factor(dtest$PoolQC, levels = c(factor(d1$PoolQC) %>% levels))
 dtest$MiscFeature <- factor(dtest$MiscFeature, levels = c(factor(d1$MiscFeature) %>% levels))
+dtest$Exterior1st <- factor(dtest$Exterior1st, levels = c(factor(d1$Exterior1st) %>% levels))
+
+
+#other factor fixes
+dtest$Utilities <- factor(dtest$Utilities, levels = c("AllPub", "NoSeWa","none"))
+d1$Utilities <- factor(d1$Utilities, levels = c("AllPub", "NoSeWa","none"))
+
+dtest$KitchenQual <- factor(dtest$KitchenQual, levels = c("Ex",   "Fa",   "Gd",   "none", "TA" ))
+d1$KitchenQual <- factor(d1$KitchenQual, levels = c("Ex",   "Fa",   "Gd",   "none", "TA" ))
+
+dtest$Exterior2nd <- factor(dtest$Exterior2nd, levels = c("AsbShng", "AsphShn", "Brk Cmn", "BrkFace", "CBlock",  "CmentBd", "HdBoard", "ImStucc", "MetalSd", "none",    "Plywood", "Other", "Stone",   "Stucco",  "VinylSd", "Wd Sdng", "Wd Shng" ))
+d1$Exterior2nd <- factor(d1$Exterior2nd, levels = c("AsbShng", "AsphShn", "Brk Cmn", "BrkFace", "CBlock",  "CmentBd", "HdBoard", "ImStucc", "MetalSd", "none",    "Plywood", "Other", "Stone",   "Stucco",  "VinylSd", "Wd Sdng", "Wd Shng" ))
+
+
+#MM-Something weird is going on with Exterior1st but i can't figure out what - i'll take another look tomorrow)
+#dtest$Exterior1st <- factor(dtest$Exterior1st, levels = c("AsbShng", "AsphShn", "BrkComm", "BrkFace", "CBlock",  "CmentBd", #"HdBoard", "ImStucc", "MetalSd", "none",    "Plywood", "Stone",   "Stucco",  "VinylSd", "Wd Sdng", "WdShng" ))
+#d1$Exterior1st <- factor(d1$Exterior1st, levels = c("AsbShng", "AsphShn", "BrkComm", "BrkFace", "CBlock",  "CmentBd", #"HdBoard", "ImStucc", "MetalSd", "none",    "Plywood", "Stone",   "Stucco",  "VinylSd", "Wd Sdng", "WdShng" ))
+
+
+
+
+d1$Functional <- factor(d1$Functional, levels = c(levels(dtest$Functional) ))
+d1$MSZoning <- factor(d1$MSZoning, levels = c(levels(dtest$MSZoning)))
+d1$SaleType <- factor(d1$SaleType, levels = c(levels(dtest$SaleType) ))
+
 
 ```
 
@@ -356,14 +388,54 @@ dtest$MiscFeature <- factor(dtest$MiscFeature, levels = c(factor(d1$MiscFeature)
 #MSSubClass is the type of home and MoSold is the month it was sold, both are categorical in nature
 
 d1 <- d1 %>%
-mutate(MSSubClass = factor(MSSubClass),
+mutate(MSSubClass = factor(MSSubClass, levels = c("20","30", "40", "45",  "50",  "60",  "70",  "75",  "80",  "85",  "90",  "120", "150", "160", "180", "190")),
        MoSold = factor(MoSold))
        
+# levels(d1$MSSubClass) == levels(dtest$MSSubClass)  MM: dtest has an extra MSSubClass for 150
+
+
+
+
 dtest <- dtest %>%
-mutate(MSSubClass = factor(MSSubClass),
+mutate(MSSubClass = factor(MSSubClass, levels = c("20","30", "40", "45",  "50",  "60",  "70",  "75",  "80",  "85",  "90",  "120", "150", "160", "180", "190")),
        MoSold = factor(MoSold))
 
+
 ```
+
+
+## Column Manipulation: section for combining/adding/removing columns from the original dataset
+### Created columns
+```{r}
+#Age = create a column to calculate the age at time of sale
+#TotBath = create a column to combine bathrooms variables into a single variable
+
+d1 <- d1 %>%
+  mutate(Age = (YrSold - YearRemodAdd),
+         TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)))
+
+dtest <- dtest %>%
+  mutate(Age = (YrSold - YearRemodAdd),
+          TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)))
+
+```
+
+
+
+### columns to remove/ignore
+
+```{r}
+#GrLivArea appears to be a summation of (FirstFlrSF, SecondFlrSF, LowQualFinSF)
+
+mean(d1$GrLivArea == (d1$FirstFlrSF+d1$SecondFlrSF+d1$LowQualFinSF))
+mean(dtest$GrLivArea == (dtest$FirstFlrSF+dtest$SecondFlrSF+dtest$LowQualFinSF))
+
+#stripping out Exterior1st from both datasets to see if I can get a kaggle submission in
+d1 <- d1 %>% select(-Exterior1st)
+dtest <- dtest %>% select(-Exterior1st)
+
+```
+
 
 ## Plot quantitative explanatory variables. Identify variables that are non-linear and should be log-transformed
 
@@ -441,6 +513,8 @@ ggplot(d1,aes(TotBath))+
 # what about salePrice? Shouldnt it be log transformed?
 
 
+
+
 ```
 
 ## Plot SalePrice against the other quant variables...not sure what I'm looking for but wanted to plot them...
@@ -515,35 +589,15 @@ ggplot(d1,aes(Age, SalePrice)) +
 ggplot(d1,aes(TotBath, SalePrice)) +
   geom_point()
 
+
 # looking for variables that need to be log transformed, or what? 
-```
+# MM  - Lot Area, GrLivArea look like they might benefit from a log transformation.  However when I ran the scatterplot with the logs i'm not sure it added value for lot area:
 
-
-## Column Manipulation: section for combining/adding/removing columns from the original dataset
-
-```{r}
-#Age = create a column to calculate the age at time of sale
-#TotBath = create a column to combine bathrooms variables into a single variable
-
-d1 <- d1 %>%
-  mutate(Age = (YrSold - YearRemodAdd),
-         TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)))
-
-dtest <- dtest %>%
-  mutate(Age = (YrSold - YearRemodAdd),
-          TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)))
-
-```
-
-
-
-## columns to remove/ignore
-
-```{r}
-#GrLivArea appears to be a summation of (FirstFlrSF, SecondFlrSF, LowQualFinSF)
-
-mean(d1$GrLivArea == (d1$FirstFlrSF+d1$SecondFlrSF+d1$LowQualFinSF))
-mean(dtest$GrLivArea == (dtest$FirstFlrSF+dtest$SecondFlrSF+dtest$LowQualFinSF))
+#the log variable plots:
+ggplot(d1,aes(log(LotArea), SalePrice)) +
+  geom_point()
+ggplot(d1,aes(log(GrLivArea), SalePrice)) +
+  geom_point()
 
 
 ```
@@ -552,11 +606,14 @@ mean(dtest$GrLivArea == (dtest$FirstFlrSF+dtest$SecondFlrSF+dtest$LowQualFinSF))
 
 
 
-## Alternate Models
+
+
+##Models
 ```{r}
 #Linear Regression
 #lm(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea, data=d1)
 
+#train(SalePrice ~ ., data = d1, method = "lm") R2 = 0.9191 Kaggle Score = .18509
 
 
 
@@ -570,9 +627,8 @@ mean(dtest$GrLivArea == (dtest$FirstFlrSF+dtest$SecondFlrSF+dtest$LowQualFinSF))
 
 # Fit linear model: SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea
 
-caret_lm <- train(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea,
-                  data = d1,
-                   method = "lm")
+caret_lm <- train(SalePrice ~ ., data = d1, method = "lm")
+
 
 caret_lm 
 
@@ -590,6 +646,8 @@ caret_lm %>%
 # Residual standard error: 37920 on 1431 degrees of freedom
 # Multiple R-squared:  0.7766,	Adjusted R-squared:  0.7722
 
+
+
 ```
 
 
@@ -597,21 +655,30 @@ caret_lm %>%
 ##Kaggle Submission
 ```{r}
 
-submit_model <- lm(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea, data=d1)
-summary (submit_model)
+submit_model <- train(SalePrice ~ ., data = d1, method = "lm")
+#summary (submit_model)
+
 
 # export our predictions as a .csv  
 
 kaggle_submit <- dtest %>% 
   select(Id) %>% 
-  mutate(SalePrice = predict(submit_model, newdata = dtest))
+  mutate(SalePrice = predict(submit_model, newdata = dtest, na.action = na.pass))
+
+
+#MM - dtest rows with NAs from the predict function - Something weird is going on with MSZoning - sometimes the factors are showing as integers as sometimes they show as they should.  
+
+#submit_NAs <- kaggle_submit %>%
+#  filter(is.na(SalePrice) == TRUE) %>% print
+
+
 
 #head(kaggle_submit)
 
 # code to write the csv file to upload in kaggle
-# write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
 #     <-- I cannot write to this file
-# Craig/Belu - you'll need to swap out the path to write the file to your computer.  you can just save it in this section that way any of us can generate the file
+# MM: Craig/Belu - you'll need to swap out the path to write the file to your computer.  you can just save it in this section that way any of us can generate the file
 
 #Mike - "C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv"
 #Craig - "C:\\????
