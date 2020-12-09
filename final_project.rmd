@@ -409,14 +409,20 @@ mutate(MSSubClass = factor(MSSubClass, levels = c("20","30", "40", "45",  "50", 
 ```{r}
 #Age = create a column to calculate the age at time of sale
 #TotBath = create a column to combine bathrooms variables into a single variable
-
+#log(LotArea,GrLivArea)  - based on plots below.
 d1 <- d1 %>%
   mutate(Age = (YrSold - YearRemodAdd),
-         TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)))
+         TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)),
+         log_LotArea = log(LotArea),
+         log_GrLivArea = log(GrLivArea))
 
 dtest <- dtest %>%
   mutate(Age = (YrSold - YearRemodAdd),
-          TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)))
+          TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)),
+         log_LotArea = log(LotArea),
+         log_GrLivArea = log(GrLivArea))
+
+
 
 ```
 
@@ -434,7 +440,7 @@ mean(dtest$GrLivArea == (dtest$FirstFlrSF+dtest$SecondFlrSF+dtest$LowQualFinSF))
 d1 <- d1 %>% select(-Exterior1st, -FirstFlrSF, -SecondFlrSF, -LowQualFinSF)
 dtest <- dtest %>% select(-Exterior1st, -FirstFlrSF, -SecondFlrSF, -LowQualFinSF)
 
-#MM -down to 78 variables
+#MM -What else can we remove to make things a bit easier?
 
 ```
 
@@ -593,9 +599,9 @@ ggplot(d1,aes(TotBath, SalePrice)) +
 
 
 # looking for variables that need to be log transformed, or what? 
-# MM  - Lot Area, GrLivArea look like they might benefit from a log transformation.  However when I ran the scatterplot with the logs i'm not sure it added value for lot area:
+# MM  - Lot Area, GrLivArea look like they might benefit from a log transformation.  And by that i'm just looking at plots that are supercondensed to the left but then spread out as it moves right.   However when I ran the scatterplot with the logs i'm not sure it added value for lot area:
 
-#the log variable plots:
+#MM-the log variable plots - I added both of these columns up in the adding columns section above:
 ggplot(d1,aes(log(LotArea), SalePrice)) +
   geom_point()
 ggplot(d1,aes(log(GrLivArea), SalePrice)) +
