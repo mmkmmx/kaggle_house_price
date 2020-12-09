@@ -190,7 +190,7 @@ d1 <- d1 %>%
 
 dtest$BsmtFinSF1[661] = median(dtest$BsmtFinSF1,na.rm=TRUE)
 
-#dtest$ID 2152 isn't setting NA for Exterior1st to none
+#MM - dtest$ID 2152 isn't setting NA for Exterior1st to none - Something weird was going on here so later that i couldn't figure out so i just stripped Exterior1st out of the d1 and dtest datasets.
 
 
 #d1 %>% 
@@ -425,14 +425,16 @@ dtest <- dtest %>%
 ### columns to remove/ignore
 
 ```{r}
-#GrLivArea appears to be a summation of (FirstFlrSF, SecondFlrSF, LowQualFinSF)
+#MM - GrLivArea appears to be a summation of (FirstFlrSF, SecondFlrSF, LowQualFinSF)
 
 mean(d1$GrLivArea == (d1$FirstFlrSF+d1$SecondFlrSF+d1$LowQualFinSF))
 mean(dtest$GrLivArea == (dtest$FirstFlrSF+dtest$SecondFlrSF+dtest$LowQualFinSF))
 
-#stripping out Exterior1st from both datasets to see if I can get a kaggle submission in
-d1 <- d1 %>% select(-Exterior1st)
-dtest <- dtest %>% select(-Exterior1st)
+#MM- stripping out Exterior1st in addition to the above from both datasets to see if I can get a kaggle submission in
+d1 <- d1 %>% select(-Exterior1st, -FirstFlrSF, -SecondFlrSF, -LowQualFinSF)
+dtest <- dtest %>% select(-Exterior1st, -FirstFlrSF, -SecondFlrSF, -LowQualFinSF)
+
+#MM -down to 78 variables
 
 ```
 
