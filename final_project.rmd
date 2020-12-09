@@ -437,10 +437,23 @@ mean(d1$GrLivArea == (d1$FirstFlrSF+d1$SecondFlrSF+d1$LowQualFinSF))
 mean(dtest$GrLivArea == (dtest$FirstFlrSF+dtest$SecondFlrSF+dtest$LowQualFinSF))
 
 #MM- stripping out Exterior1st in addition to the above from both datasets to see if I can get a kaggle submission in
-d1 <- d1 %>% select(-Exterior1st, -FirstFlrSF, -SecondFlrSF, -LowQualFinSF)
-dtest <- dtest %>% select(-Exterior1st, -FirstFlrSF, -SecondFlrSF, -LowQualFinSF)
+d1 <- d1 %>% select(
+  -Exterior1st, 
+  -FirstFlrSF, 
+  -SecondFlrSF, 
+  -LowQualFinSF,
+  -LotArea, #only remove this if we're including the logged transformed variable above
+  -GrLivArea) #only remove this if we're including the logged transformed variable above
 
-#MM -What else can we remove to make things a bit easier?
+dtest <- dtest %>% select(
+  -Exterior1st, 
+  -FirstFlrSF, 
+  -SecondFlrSF, 
+  -LowQualFinSF,
+  -LotArea, #only remove this if we're including the logged transformed variable above
+  -GrLivArea) #only remove this if we're including the logged transformed variable above
+
+#MM -What else can we remove to make things a bit simpler?  Theres a lot fields that seem similar.
 
 ```
 
@@ -623,6 +636,11 @@ ggplot(d1,aes(log(GrLivArea), SalePrice)) +
 
 #train(SalePrice ~ ., data = d1, method = "lm") R2 = 0.9191 Kaggle Score = .18509
 
+#train(log(SalePrice) ~., data = d1, method = "lm") - Caret OOS R2 = .8,  kaggle score = 9 (really bad haha)
+
+
+
+
 
 
 
@@ -635,7 +653,7 @@ ggplot(d1,aes(log(GrLivArea), SalePrice)) +
 
 # Fit linear model: SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea
 
-caret_lm <- train(SalePrice ~ ., data = d1, method = "lm")
+caret_lm <- train(log(SalePrice) ~., data = d1, method = "lm")
 
 
 caret_lm 
@@ -664,27 +682,29 @@ caret_lm %>%
 ```{r}
 
 submit_model <- train(SalePrice ~ ., data = d1, method = "lm")
+
 #summary (submit_model)
 
 
-# export our predictions as a .csv  
+#put our predictions into the submission format for kaggle
 
 kaggle_submit <- dtest %>% 
   select(Id) %>% 
-  mutate(SalePrice = predict(submit_model, newdata = dtest, na.action = na.pass))
+  mutate(SalePrice = predict(submit_model, newdata = dtest))
 
 
-#MM - dtest rows with NAs from the predict function - Something weird is going on with MSZoning - sometimes the factors are showing as integers as sometimes they show as they should.  
+#MM-Check to make sure submission doesn't have any NAs
 
-#submit_NAs <- kaggle_submit %>%
-#  filter(is.na(SalePrice) == TRUE) %>% print
+ kaggle_submit %>%
+  filter(is.na(SalePrice) == TRUE) %>% print
 
 
 
-#head(kaggle_submit)
+glimpse(kaggle_submit)
 
 # code to write the csv file to upload in kaggle
 write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+
 #     <-- I cannot write to this file
 # MM: Craig/Belu - you'll need to swap out the path to write the file to your computer.  you can just save it in this section that way any of us can generate the file
 
@@ -692,6 +712,8 @@ write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price
 #Craig - "C:\\????
 #Belu - "c:\\????
 ```
+
+
 
 
 
