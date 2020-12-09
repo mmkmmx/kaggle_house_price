@@ -413,14 +413,16 @@ mutate(MSSubClass = factor(MSSubClass, levels = c("20","30", "40", "45",  "50", 
 d1 <- d1 %>%
   mutate(Age = (YrSold - YearRemodAdd),
          TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)),
-         log_LotArea = log(LotArea),
-         log_GrLivArea = log(GrLivArea))
+         #log_LotArea = log(LotArea),
+         #log_GrLivArea = log(GrLivArea)
+         )
 
 dtest <- dtest %>%
   mutate(Age = (YrSold - YearRemodAdd),
           TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)),
-         log_LotArea = log(LotArea),
-         log_GrLivArea = log(GrLivArea))
+         #log_LotArea = log(LotArea),
+         #log_GrLivArea = log(GrLivArea)
+         )
 
 
 
@@ -441,17 +443,19 @@ d1 <- d1 %>% select(
   -Exterior1st, 
   -FirstFlrSF, 
   -SecondFlrSF, 
-  -LowQualFinSF,
-  -LotArea, #only remove this if we're including the logged transformed variable above
-  -GrLivArea) #only remove this if we're including the logged transformed variable above
+  -LowQualFinSF
+  #  , -LotArea, #only remove this if we're including the logged transformed variable above
+ # -GrLivArea #only remove this if we're including the logged transformed variable above
+)
 
 dtest <- dtest %>% select(
   -Exterior1st, 
   -FirstFlrSF, 
   -SecondFlrSF, 
-  -LowQualFinSF,
-  -LotArea, #only remove this if we're including the logged transformed variable above
-  -GrLivArea) #only remove this if we're including the logged transformed variable above
+  -LowQualFinSF
+ # , -LotArea, #only remove this if we're including the logged transformed variable above
+  # -GrLivArea #only remove this if we're including the logged transformed variable above
+)
 
 #MM -What else can we remove to make things a bit simpler?  Theres a lot fields that seem similar.
 
@@ -634,7 +638,7 @@ ggplot(d1,aes(log(GrLivArea), SalePrice)) +
 #Linear Regression
 #lm(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea, data=d1)
 
-#train(SalePrice ~ ., data = d1, method = "lm") R2 = 0.9191 Kaggle Score = .18509
+#train(SalePrice ~ ., data = d1, method = "lm") R2 = 0.9191 Kaggle Score = .18297 (12/8 no logtransformed variables)
 
 #train(log(SalePrice) ~., data = d1, method = "lm") - Caret OOS R2 = .8,  kaggle score = 9 (really bad haha)
 
