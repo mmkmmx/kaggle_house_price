@@ -193,6 +193,9 @@ dtest$BsmtFinSF1[661] = median(dtest$BsmtFinSF1,na.rm=TRUE)
 
 #MM - dtest$ID 2152 isn't setting NA for Exterior1st to none - Something weird was going on here so later that i couldn't figure out so i just stripped Exterior1st out of the d1 and dtest datasets.
 
+#CT - converting it to BrkFace worked
+
+dtest$Exterior1st[692] = "BrkFace"
 
 #d1 %>% 
 #  mutate_all(.funs = is.na) %>% 
@@ -434,35 +437,41 @@ dtest <- dtest %>%
 ### columns to remove/ignore
 
 ```{r}
+
+#CT - I put these back in by blocking the code in this chunk, that is because i was able to fix 'Exterior1st' in NA resolve step above
+
 #MM - GrLivArea appears to be a summation of (FirstFlrSF, SecondFlrSF, LowQualFinSF)
 
-mean(d1$GrLivArea == (d1$FirstFlrSF+d1$SecondFlrSF+d1$LowQualFinSF))
-mean(dtest$GrLivArea == (dtest$FirstFlrSF+dtest$SecondFlrSF+dtest$LowQualFinSF))
+#mean(d1$GrLivArea == (d1$FirstFlrSF+d1$SecondFlrSF+d1$LowQualFinSF))
+#mean(dtest$GrLivArea == (dtest$FirstFlrSF+dtest$SecondFlrSF+dtest$LowQualFinSF))
 
 #MM- stripping out Exterior1st in addition to the above from both datasets to see if I can get a kaggle submission in
-d1 <- d1 %>% select(
-  -Exterior1st, 
-  -FirstFlrSF, 
-  -SecondFlrSF, 
-  -LowQualFinSF
+#d1 <- d1 %>% select(
+#  -Exterior1st, 
+#  -FirstFlrSF, 
+#  -SecondFlrSF, 
+#  -LowQualFinSF
   #  , -LotArea, #only remove this if we're including the logged transformed variable above
  # -GrLivArea #only remove this if we're including the logged transformed variable above
-)
+#)
 
-dtest <- dtest %>% select(
-  -Exterior1st, 
-  -FirstFlrSF, 
-  -SecondFlrSF, 
-  -LowQualFinSF
+#dtest <- dtest %>% select(
+#  -Exterior1st, 
+#  -FirstFlrSF, 
+#  -SecondFlrSF, 
+#  -LowQualFinSF
  # , -LotArea, #only remove this if we're including the logged transformed variable above
   # -GrLivArea #only remove this if we're including the logged transformed variable above
-)
+#)
 
 #MM -What else can we remove to make things a bit simpler?  Theres a lot fields that seem similar.
 
 ```
 ##Interactions
 ```{r}
+
+# CT - yeah i dont like this method for specifying interaction variables either. lets work on interaction models below 
+
 #MM - this basically takes every factor level creates a 2 way interaction variable using every other variable. Resulted in an additional 37k columns.  Tried to fit it to a model but it killed itself.  I'm going to focus on figuring out which of the current variables we have are most important so we can trim the list down a bit.
 
 # d1_int_set <- dummyVars( ~.^2,
@@ -519,12 +528,12 @@ ggplot(d1,aes(BsmtUnfSF))+
   geom_histogram()
 ggplot(d1,aes(TotalBsmtSF))+
   geom_histogram()
-ggplot(d1,aes(FirstFlrSF))+
-  geom_histogram()
-ggplot(d1,aes(SecondFlrSF))+
-  geom_histogram()
-ggplot(d1,aes(LowQualFinSF))+
-  geom_histogram()
+#ggplot(d1,aes(FirstFlrSF))+
+#  geom_histogram()
+#ggplot(d1,aes(SecondFlrSF))+
+#  geom_histogram()
+#ggplot(d1,aes(LowQualFinSF))+
+#  geom_histogram()
 ggplot(d1,aes(GrLivArea))+
   geom_histogram()
 ggplot(d1,aes(BsmtFullBath))+
@@ -600,12 +609,12 @@ ggplot(d1,aes(BsmtUnfSF, SalePrice)) +
   geom_point()
 ggplot(d1,aes(TotalBsmtSF, SalePrice)) +
   geom_point()
-ggplot(d1,aes(FirstFlrSF, SalePrice)) +
-  geom_point()
-ggplot(d1,aes(SecondFlrSF, SalePrice)) +
-  geom_point()
-ggplot(d1,aes(LowQualFinSF, SalePrice)) +
-  geom_point()
+#ggplot(d1,aes(FirstFlrSF, SalePrice)) +
+#  geom_point()
+#ggplot(d1,aes(SecondFlrSF, SalePrice)) +
+#  geom_point()
+#ggplot(d1,aes(LowQualFinSF, SalePrice)) +
+#  geom_point()
 ggplot(d1,aes(GrLivArea, SalePrice)) +
   geom_point()
 ggplot(d1,aes(BsmtFullBath, SalePrice)) +
@@ -664,7 +673,7 @@ ggplot(d1,aes(log(GrLivArea), SalePrice)) +
 
 
 
-##Models
+## Model from our interim report 
 ```{r}
 #Linear Regression
 #lm(SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea, data=d1)
@@ -674,16 +683,8 @@ ggplot(d1,aes(log(GrLivArea), SalePrice)) +
 #train(log(SalePrice) ~., data = d1, method = "lm") - Caret OOS R2 = .8,  kaggle score = 9 (really bad haha)
 
 
+# Caret cross-validation
 
-
-
-
-
-```
-
-
-#Caret cross-validation
-```{r}
 # In-sample and out of sample R2 via caret linear model 
 
 # Fit linear model: SalePrice ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea
@@ -708,50 +709,105 @@ caret_lm %>%
 # Multiple R-squared:  0.7766,	Adjusted R-squared:  0.7722
 
 
-
 ```
 
 
 
-##Kaggle Submission
+## SalePrice on all variables
 ```{r}
 
 submit_model <- train(SalePrice ~ ., data = d1, method = "lm")
 
-#summary (submit_model)
-
-
-#put our predictions into the submission format for kaggle
-
+# kaggle submission format
 kaggle_submit <- dtest %>% 
   select(Id) %>% 
   mutate(SalePrice = predict(submit_model, newdata = dtest))
 
-
-#MM-Check to make sure submission doesn't have any NAs
-
+# Check to make sure submission doesn't have any NAs
  kaggle_submit %>%
   filter(is.na(SalePrice) == TRUE) %>% print
 
+# csv file
+write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
 
-
-glimpse(kaggle_submit)
-
-# code to write the csv file to upload in kaggle
-write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
-
-#     <-- I cannot write to this file
 # MM: Craig/Belu - you'll need to swap out the path to write the file to your computer.  you can just save it in this section that way any of us can generate the file
 
 #Mike - "C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv"
 #Craig - "C:\\????
 #Belu - "c:\\????
+
+# kaggle score = 0.18297
+
 ```
 
 
 
+## Log-salePrice on all variables 
+
+```{r}
+
+submit_model = train(log(SalePrice) ~., data = d1, method = "lm") 
+
+# kaggle submission format
+kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict function
+  select(Id) %>% 
+  mutate(SalePrice = exp(predict(submit_model, newdata = dtest)))
+
+# Check to make sure submission doesn't have any NAs
+ kaggle_submit %>%
+  filter(is.na(SalePrice) == TRUE) %>% print
+
+# csv file
+write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
+
+# kaggle score = 0.15059
+
+```
 
 
+## Log-salePrice on neighborhood and square foot variables (model from interim report, with salePrice logged)
+
+```{r}
+
+submit_model = train(log(SalePrice) ~ Neighborhood + YearBuilt + FirstFlrSF + SecondFlrSF + GarageArea, data = d1, method = "lm") 
+
+# kaggle submission format
+kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict function
+  select(Id) %>% 
+  mutate(SalePrice = exp(predict(submit_model, newdata = dtest)))
+
+# Check to make sure submission doesn't have any NAs
+ kaggle_submit %>%
+  filter(is.na(SalePrice) == TRUE) %>% print
+
+# csv file
+write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
+
+# kaggle score = 0.19128
+
+
+```
+## Log-salePrice on all variables, random forest
+
+```{r}
+
+submit_model = train(log(SalePrice) ~ ., data = d1, method = "rf") 
+
+# kaggle submission format
+kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict function
+  select(Id) %>% 
+  mutate(SalePrice = exp(predict(submit_model, newdata = dtest)))
+
+# Check to make sure submission doesn't have any NAs
+ kaggle_submit %>%
+  filter(is.na(SalePrice) == TRUE) %>% print
+
+# csv file
+write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
+
+# kaggle score = 
+
+```
 
 
 
