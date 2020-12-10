@@ -460,8 +460,38 @@ dtest <- dtest %>% select(
 #MM -What else can we remove to make things a bit simpler?  Theres a lot fields that seem similar.
 
 ```
+##Interactions
+```{r}
+#MM - this basically takes every factor level creates a 2 way interaction variable using every other variable. Resulted in an additional 37k columns.  Tried to fit it to a model but it killed itself.  I'm going to focus on figuring out which of the current variables we have are most important so we can trim the list down a bit.
+
+d1_int_set <- dummyVars( ~.^2, 
+                     data = d1, 
+                     fullRank = T) %>% 
+  predict(newdata = d1)
 
 
+dtest_int_set <- dummyVars( ~.^2, 
+                     data = dtest, 
+                     fullRank = T) %>% 
+  predict(newdata = dtest)
+
+(lm_int <- train(price ~ .,
+                data = d1_int_set,
+                method = "lm"))
+
+summary(lm_int)
+
+
+dim(d1_int_set)
+
+glimpse(d1_int_set)
+
+colnames(d1_int_set)
+
+
+
+
+```
 ## Plot quantitative explanatory variables. Identify variables that are non-linear and should be log-transformed
 
 ```{r}
