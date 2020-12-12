@@ -417,15 +417,17 @@ mutate(MSSubClass = factor(MSSubClass, levels = c("20","30", "40", "45",  "50", 
 d1 <- d1 %>%
   mutate(Age = (YrSold - YearRemodAdd),
          TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)),
-         #log_LotArea = log(LotArea),
-         #log_GrLivArea = log(GrLivArea)
+         log_LotArea = log(LotArea),
+         log_GrLivArea = log(GrLivArea),
+         log_TotalBsmtSF = log(TotalBsmtSF)
          )
 
 dtest <- dtest %>%
   mutate(Age = (YrSold - YearRemodAdd),
           TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)),
-         #log_LotArea = log(LotArea),
-         #log_GrLivArea = log(GrLivArea)
+         log_LotArea = log(LotArea),
+         log_GrLivArea = log(GrLivArea),
+          log_TotalBsmtSF = log(TotalBsmtSF)
          )
 
 
@@ -586,85 +588,85 @@ ggplot(d1,aes(TotBath))+
 
 
 ```{r}
-
-ggplot(d1,aes(LotFrontage, SalePrice)) +
+#updated this to use log(SalePrice)
+ggplot(d1,aes(LotFrontage, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(LotArea, SalePrice)) +
+ggplot(d1,aes(LotArea, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(OverallQual, SalePrice)) +
+ggplot(d1,aes(OverallQual, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(OverallCond, SalePrice)) +
+ggplot(d1,aes(OverallCond, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(YearBuilt, SalePrice)) +
+ggplot(d1,aes(YearBuilt, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(YearRemodAdd, SalePrice)) +
+ggplot(d1,aes(YearRemodAdd, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(MasVnrArea, SalePrice)) +
+ggplot(d1,aes(MasVnrArea, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(BsmtFinSF1, SalePrice)) +
+ggplot(d1,aes(BsmtFinSF1, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(BsmtFinSF2, SalePrice)) +
+ggplot(d1,aes(BsmtFinSF2, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(BsmtUnfSF, SalePrice)) +
+ggplot(d1,aes(BsmtUnfSF, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(TotalBsmtSF, SalePrice)) +
+ggplot(d1,aes(TotalBsmtSF, log(SalePrice))) +
   geom_point()
-#ggplot(d1,aes(FirstFlrSF, SalePrice)) +
+#ggplot(d1,aes(FirstFlrSF, log(SalePrice))) +
 #  geom_point()
-#ggplot(d1,aes(SecondFlrSF, SalePrice)) +
+#ggplot(d1,aes(SecondFlrSF, log(SalePrice))) +
 #  geom_point()
-#ggplot(d1,aes(LowQualFinSF, SalePrice)) +
+#ggplot(d1,aes(LowQualFinSF, log(SalePrice))) +
 #  geom_point()
-ggplot(d1,aes(GrLivArea, SalePrice)) +
+ggplot(d1,aes(GrLivArea, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(BsmtFullBath, SalePrice)) +
+ggplot(d1,aes(BsmtFullBath, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(BsmtHalfBath, SalePrice)) +
+ggplot(d1,aes(BsmtHalfBath, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(FullBath, SalePrice)) +
+ggplot(d1,aes(FullBath, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(HalfBath, SalePrice)) +
+ggplot(d1,aes(HalfBath, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(BedroomAbvGr, SalePrice)) +
+ggplot(d1,aes(BedroomAbvGr, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(KitchenAbvGr, SalePrice)) +
+ggplot(d1,aes(KitchenAbvGr, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(TotRmsAbvGrd, SalePrice)) +
+ggplot(d1,aes(TotRmsAbvGrd, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(Fireplaces, SalePrice)) +
+ggplot(d1,aes(Fireplaces, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(GarageYrBlt, SalePrice)) +
+ggplot(d1,aes(GarageYrBlt, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(GarageCars, SalePrice)) +
+ggplot(d1,aes(GarageCars, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(GarageArea, SalePrice)) +
+ggplot(d1,aes(GarageArea, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(WoodDeckSF, SalePrice)) +
+ggplot(d1,aes(WoodDeckSF, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(OpenPorchSF, SalePrice)) +
+ggplot(d1,aes(OpenPorchSF, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(PoolArea, SalePrice)) +
+ggplot(d1,aes(PoolArea, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(YrSold, SalePrice)) +
+ggplot(d1,aes(YrSold, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(SalePrice, SalePrice)) +
+ggplot(d1,aes(log(SalePrice), log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(Age, SalePrice)) +
+ggplot(d1,aes(Age, log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(TotBath, SalePrice)) +
+ggplot(d1,aes(TotBath, log(SalePrice))) +
   geom_point()
 
 
 # looking for variables that need to be log transformed, or what? 
 # MM  - Lot Area, GrLivArea look like they might benefit from a log transformation.  And by that i'm just looking at plots that are supercondensed to the left but then spread out as it moves right.   However when I ran the scatterplot with the logs i'm not sure it added value for lot area:
 
-#MM-the log variable plots - I added both of these columns up in the adding columns section above:
-ggplot(d1,aes(log(LotArea), SalePrice)) +
+#MM-the log variable plots - I added these columns up in the adding columns section above:
+ggplot(d1,aes(log(LotArea), log(SalePrice))) +
   geom_point()
-ggplot(d1,aes(log(GrLivArea), SalePrice)) +
+ggplot(d1,aes(log(GrLivArea), log(SalePrice))) +
   geom_point()
-
-
+ggplot(d1,aes(log(TotalBsmtSF), log(SalePrice))) +
+  geom_point()
 ```
 
 
@@ -680,7 +682,7 @@ ggplot(d1,aes(log(GrLivArea), SalePrice)) +
 
 #train(SalePrice ~ ., data = d1, method = "lm") R2 = 0.9191 Kaggle Score = .18297 (12/8 no logtransformed variables)
 
-#train(log(SalePrice) ~., data = d1, method = "lm") - Caret OOS R2 = .8,  kaggle score = 9 (really bad haha)
+#train(log(SalePrice) ~., data = d1, method = "lm") - Caret OOS R2 = .8,  kaggle score = 9 (really bad haha)  
 
 
 # Caret cross-validation

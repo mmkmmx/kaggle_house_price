@@ -62,6 +62,8 @@ ggplot(d1,aes(log(SalePrice)))+
 ```
 Using log(SalePrice) as the target variable in a linear regression with all variables further improved the model to a Kaggle score of .15.   
 
+(this could go in the section up above as well) We then created histograms and log transformed variables where they appeared to be skewed to the right with outliers.  We also plotted continuous variables in a scatter plot with SalesPrice to determine if any of those variables could be improved with a log function.  Between these 
+
 
 ## Model performance
 Model performance. How did your model perform on the train set? Report train set RMSE and R2. What is your estimate of the model’s performance on the test set using cross-validation? Report estimated RMSE and R2 on the test set, as well as the score you received back from your Kaggle submission.
