@@ -31,6 +31,10 @@ Your best Kaggle score (log RMSE) and rank.
 ## Introduction
 Introduction. What is the problem you are working on? Briefly but thoroughly describe the Kaggle train/test format, and your ultimate objective in the project.
 
+We can probably just recycle the intro from the interim project:
+
+There are so many factors that can affect price of houses regardles the cities or countries. Often times homebuyers and real estate companies would come across with a question to consider, "what factors tend to have greater influence on prices?" With the sample training dataset of home prices in Ames, Iowa, there are 80 variables of 1459 homes shown, along with the sales price of each home. That information becomes critical to analyze to find out which are the top factors/predictors of home sales price. After analyzing of the training dataset, we will predict the home prices of 1459 houses in the testing dataset, based on their features. The purpose of this practice is to discover the pattern and build the model to predict home sales prices with the highest accuracy possible. 
+
 ## Data modeling and cleaning
 Data modeling and Cleaning. What sort of data modeling and cleaning decisions did you make? Did you create any variables? Did you refactor any variables? How did you deal with NAs?
 
