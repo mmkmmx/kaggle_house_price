@@ -66,8 +66,11 @@ Using log(SalePrice) as the target variable in a linear regression with all vari
 
 We also noticed that the out of sample RMSE was around .1 lower than the in sample R^2^ indicating that our model was over-fitting.  We then began experimenting with other data models that might offer better results.  Using caret's random forest model ("rf") in conjunction with log(SalePrice) returned favorable RMSE and R^2^ values and a Kaggle Score of .14. 
 
-We then decided to try to work some interaction effects into our model.  We initially used the code.
+We then decided to try to work some interaction effects into our model.  First we used dummyVars to transform all the variables into dummy variables. This resulted in the variable count increasing to almost 200 variables.  After that we used dummyVars again to run two-way interactions on all the variables.  This inturn resulted in over 37,000 variables.  We attempted to run this through a simple lm model but continued to get stack overflow errors presumbably due to the sheer volume of variables.  
 
+Realizing that a simple linear regression model is unlikely to be the best model to use with so many variables we looked through Kaggle for other models that might work.  This led us to the LASSO model which could pull in a vast amount of variables and determine which ones were useful and which ones were not.  Ultimately getting the LASSO model to work was just beyond our current understanding.  
+
+We then came across the idea of averaging results from multiple models together.  The thinking was that each model utilizes different methods to drive its predictions and a combination of models could result in a better prediction than the sum of its parts.  This would be similar to how holding uncorrelated assets in an investment portfolio, while individually are risky, can increase returns while lowering risk.  To this end we averaged our random forest model with our linear regression model.  These two models had respective Kaggle scores of .14 and .15, however when we averaged them together the resulting output obtained a Kaggle score of .13.  We experimented with various weightings between the two models and found that a 60/40 blend of rf and lm produced the lowest RMSE.  
 
 ## Model performance
 Model performance. How did your model perform on the train set? Report train set RMSE and R2. What is your estimate of the model’s performance on the test set using cross-validation? Report estimated RMSE and R2 on the test set, as well as the score you received back from your Kaggle submission.
