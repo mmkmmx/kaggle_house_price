@@ -734,7 +734,8 @@ write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.c
 
 # MM: Craig/Belu - you'll need to swap out the path to write the file to your computer.  you can just save it in this section that way any of us can generate the file
 
-#Mike - "C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv"
+#Mike -write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+
 #Craig - "C:\\????
 #Belu - "c:\\????
 
@@ -819,14 +820,38 @@ write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.c
 rf_model <-  train(log(SalePrice) ~ ., data = d1, method = "rf") 
 lm_model <-  train(log(SalePrice) ~., data = d1, method = "lm") 
 
+rf_model_predictions <- exp(predict(rf_model, newdata = dtest))
+lm_model_predictions <- exp(predict(lm_model, newdata = dtest))
+
+
 #weighting the rf model higher since it had a better kaggle score
-avg_model <- data.frame(Id = test_labels, SalePrice = (predictions_XGB+2*predictions_lasso)/3)
 
 kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict function
   select(Id) %>% 
-  mutate(SalePrice = exp(predict(submit_model, newdata = dtest)))
+  mutate(SalePrice = ((rf_model_predictions*2.5) + (lm_model_predictions))/3.5)
+
+
+# kaggle score with different weightings between rf and lm
+# 1.5/1 kaggle .13137
+# 2/1 split kaggle .13163
+# 1/1 kaggle .13188
+# 2.5/1 kaggle .13211
+# 3/1 kaggle .13263
+
+
+# caret out of sample: 294   RMSE 0.1496746  R2 0.8600936  MAE 0.10142802
+
+
+write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+
+
+
+head(kaggle_submit)
+
+head(dtest$Id)
 
 ```
+
 
 ## Below is code I lifted from a kaggle kernel. i want to mess with this, but the below code is raw. 
 
