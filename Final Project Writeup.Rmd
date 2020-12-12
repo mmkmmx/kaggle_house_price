@@ -51,7 +51,7 @@ ggplot(d1,aes(SalePrice))+
 
 
 ```
-However the distribution for log(SalePrice) looked 
+However the distribution for log(SalePrice) looked a lot better:
 ```{r}
 ggplot(d1,aes(log(SalePrice)))+
   geom_histogram() +
