@@ -417,17 +417,17 @@ mutate(MSSubClass = factor(MSSubClass, levels = c("20","30", "40", "45",  "50", 
 d1 <- d1 %>%
   mutate(Age = (YrSold - YearRemodAdd),
          TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)),
-         log_LotArea = log(LotArea),
-         log_GrLivArea = log(GrLivArea),
-         log_TotalBsmtSF = log(TotalBsmtSF)
+         # log_LotArea = log(LotArea),
+         # log_GrLivArea = log(GrLivArea),
+         # log_TotalBsmtSF = log(TotalBsmtSF)  #adding in the log versions of these fields is causing issues.
          )
 
 dtest <- dtest %>%
   mutate(Age = (YrSold - YearRemodAdd),
           TotBath = (FullBath + (HalfBath*.5) + BsmtFullBath + (BsmtHalfBath*.5)),
-         log_LotArea = log(LotArea),
-         log_GrLivArea = log(GrLivArea),
-          log_TotalBsmtSF = log(TotalBsmtSF)
+         # log_LotArea = log(LotArea),
+         # log_GrLivArea = log(GrLivArea),
+         #  log_TotalBsmtSF = log(TotalBsmtSF)
          )
 
 
@@ -811,6 +811,22 @@ write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.c
 
 ```
 
+
+## Trying an average of two models together - since RF and LM are different they might result in a better overall model if we average them
+```{r}
+#average of RF and LM models
+
+rf_model <-  train(log(SalePrice) ~ ., data = d1, method = "rf") 
+lm_model <-  train(log(SalePrice) ~., data = d1, method = "lm") 
+
+#weighting the rf model higher since it had a better kaggle score
+avg_model <- data.frame(Id = test_labels, SalePrice = (predictions_XGB+2*predictions_lasso)/3)
+
+kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict function
+  select(Id) %>% 
+  mutate(SalePrice = exp(predict(submit_model, newdata = dtest)))
+
+```
 
 ## Below is code I lifted from a kaggle kernel. i want to mess with this, but the below code is raw. 
 
