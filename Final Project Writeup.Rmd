@@ -62,7 +62,11 @@ ggplot(d1,aes(log(SalePrice)))+
 ```
 Using log(SalePrice) as the target variable in a linear regression with all variables further improved the model to a Kaggle score of .15.   
 
-(this could go in the section up above as well) We then created histograms and log transformed variables where they appeared to be skewed to the right with outliers.  We also plotted continuous variables in a scatter plot with SalesPrice to determine if any of those variables could be improved with a log function.  Between these 
+(this could go in the section up above as well) We then created histograms and log transformed variables where they appeared to be skewed to the right with outliers.  We also plotted continuous variables in a scatter plot with SalesPrice to determine if any of those variables could be improved with a log function.  The charts highlighted a few fields that would benefit from a log transformation: LotArea, TotalBsmtSF, GrLivArea.  Making this changes didn't have a significant effect on the RMSE.  
+
+We also noticed that the out of sample RMSE was around .1 lower than the in sample R^2^ indicating that our model was over-fitting.  We then began experimenting with other data models that might offer better results.  Using caret's random forest model ("rf") in conjunction with log(SalePrice) returned favorable RMSE and R^2^ values and a Kaggle Score of .14. 
+
+We then decided to try to work some interaction effects into our model.  We initially used the code.
 
 
 ## Model performance
@@ -76,27 +80,6 @@ Overall quality. Are you writing in full sentences? Are there many gram- matical
 
 ## Leaderboard
 Leaderboard rating. How good is your model compared to those that others reported.
-
-
-
-
-
-# This is a main header
-
-Text
-
-
-
-## this is as sub header 
-
-Text
-
-
-
-### this is as sub-sub header
-
-Text
-
 
 
 
