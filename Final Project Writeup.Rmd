@@ -1,0 +1,50 @@
+---
+title: "Predicting house sale prices"
+author: "Mike Marett, Belu Chun Ho Chik, Craig Teerlink"
+date: "December 1, 2020"
+output: 
+  pdf_document:
+    toc: FALSE
+#    number_sections: true
+---
+\newpage
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+
+# This is a main header
+
+Text
+
+
+
+## this is as sub header 
+
+Text
+
+
+
+### this is as sub-sub header
+
+Text
+
+
+
+
+
+
+*A Table is input like this*
+\begin{tabular}{l|r|r}
+Predictor & Odds Ratio & P-value\\
+\hline
+Intercept & 0.63 & 7.32e-06\\
+Store7Yes & 0.38 & 7.24e-07\\
+PriceMM & 0.79 & 2.45e-03\\
+DiscMM & 1.79 & 3.29e-11\\
+LoyalCH & 0.15 & < 2e-16\\
+\end{tabular}
+
+
