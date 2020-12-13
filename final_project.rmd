@@ -27,15 +27,11 @@ dtest <- read_csv("test.csv")
 
 # rename the three illegally named variables (1stflrSF, 2ndFlrSF, 3SsnPorch) 
 
-colnames(d1) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFrontage",   "LotArea",       "Street",        "Alley",         "LotShape", "LandContour" ,  "Utilities" ,    "LotConfig",     "LandSlope",     "Neighborhood",  "Condition1",    "Condition2",    "BldgType", "HouseStyle" ,   "OverallQual",   "OverallCond",   "YearBuilt"    , "YearRemodAdd" , "RoofStyle",     "RoofMatl",      "Exterior1st", "Exterior2nd",   "MasVnrType",    "MasVnrArea",    "ExterQual",     "ExterCond",     "Foundation",    "BsmtQual",      "BsmtCond","BsmtExposure",  "BsmtFinType1",  "BsmtFinSF1",    "BsmtFinType2",  "BsmtFinSF2",    "BsmtUnfSF",     "TotalBsmtSF" ,  "Heating", "HeatingQC",     "CentralAir" ,   "Electrical"   , "FirstFlrSF" ,     "SecondFlrSF" ,     "LowQualFinSF",  "GrLivArea",     "BsmtFullBath",  "BsmtHalfBath",  "FullBath",      "HalfBath",      "BedroomAbvGr",  "KitchenAbvGr",  "KitchenQual",   "TotRmsAbvGrd",  "Functional",   
-"Fireplaces",    "FireplaceQu",   "GarageType",    "GarageYrBlt",   "GarageFinish",  "GarageCars",    "GarageArea",    "GarageQual",   
-"GarageCond",    "PavedDrive",    "WoodDeckSF",    "OpenPorchSF",   "EnclosedPorch", "ThreeSsnPorch",     "ScreenPorch",   "PoolArea",      "PoolQC",        "Fence"       ,  "MiscFeature",   "MiscVal"     ,  "MoSold"  ,      "YrSold"  ,      "SaleType"    ,  "SaleCondition", "SalePrice")
+colnames(d1) <- c("Id", "MSSubClass", "MSZoning", "LotFrontage", "LotArea", "Street", "Alley", "LotShape", "LandContour", "Utilities", "LotConfig", "LandSlope", "Neighborhood", "Condition1", "Condition2", "BldgType", "HouseStyle", "OverallQual", "OverallCond", "YearBuilt", "YearRemodAdd", "RoofStyle", "RoofMatl", "Exterior1st", "Exterior2nd", "MasVnrType", "MasVnrArea", "ExterQual", "ExterCond", "Foundation", "BsmtQual", "BsmtCond", "BsmtExposure", "BsmtFinType1", "BsmtFinSF1", "BsmtFinType2", "BsmtFinSF2", "BsmtUnfSF", "TotalBsmtSF", "Heating", "HeatingQC", "CentralAir", "Electrical", "FirstFlrSF", "SecondFlrSF", "LowQualFinSF", "GrLivArea", "BsmtFullBath", "BsmtHalfBath", "FullBath", "HalfBath", "BedroomAbvGr", "KitchenAbvGr", "KitchenQual", "TotRmsAbvGrd", "Functional", "Fireplaces", "FireplaceQu", "GarageType", "GarageYrBlt", "GarageFinish", "GarageCars", "GarageArea", "GarageQual", "GarageCond", "PavedDrive", "WoodDeckSF", "OpenPorchSF", "EnclosedPorch", "ThreeSsnPorch", "ScreenPorch", "PoolArea", "PoolQC", "Fence", "MiscFeature", "MiscVal", "MoSold", "YrSold", "SaleType", "SaleCondition", "SalePrice")
 
 # same thing for dtest (minus sales price)
 
-colnames(dtest) <- c("Id",            "MSSubClass",    "MSZoning" ,     "LotFrontage",   "LotArea",       "Street",        "Alley",         "LotShape", "LandContour" ,  "Utilities" ,    "LotConfig",     "LandSlope",     "Neighborhood",  "Condition1",    "Condition2",    "BldgType", "HouseStyle" ,   "OverallQual",   "OverallCond",   "YearBuilt"    , "YearRemodAdd" , "RoofStyle",     "RoofMatl",      "Exterior1st", "Exterior2nd",   "MasVnrType",    "MasVnrArea",    "ExterQual",     "ExterCond",     "Foundation",    "BsmtQual",      "BsmtCond","BsmtExposure",  "BsmtFinType1",  "BsmtFinSF1",    "BsmtFinType2",  "BsmtFinSF2",    "BsmtUnfSF",     "TotalBsmtSF" ,  "Heating", "HeatingQC",     "CentralAir" ,   "Electrical"   , "FirstFlrSF" ,     "SecondFlrSF" ,     "LowQualFinSF",  "GrLivArea",     "BsmtFullBath",  "BsmtHalfBath",  "FullBath",      "HalfBath",      "BedroomAbvGr",  "KitchenAbvGr",  "KitchenQual",   "TotRmsAbvGrd",  "Functional",   
-"Fireplaces",    "FireplaceQu",   "GarageType",    "GarageYrBlt",   "GarageFinish",  "GarageCars",    "GarageArea",    "GarageQual",   
-"GarageCond",    "PavedDrive",    "WoodDeckSF",    "OpenPorchSF",   "EnclosedPorch", "ThreeSsnPorch",     "ScreenPorch",   "PoolArea",      "PoolQC",        "Fence"       ,  "MiscFeature",   "MiscVal"     ,  "MoSold"  ,      "YrSold"  ,      "SaleType"    ,  "SaleCondition")
+colnames(dtest) <- c("Id",  "MSSubClass", "MSZoning", "LotFrontage", "LotArea", "Street", "Alley", "LotShape", "LandContour", "Utilities", "LotConfig", "LandSlope", "Neighborhood", "Condition1", "Condition2", "BldgType", "HouseStyle", "OverallQual", "OverallCond", "YearBuilt", "YearRemodAdd", "RoofStyle", "RoofMatl", "Exterior1st", "Exterior2nd", "MasVnrType", "MasVnrArea", "ExterQual", "ExterCond", "Foundation", "BsmtQual", "BsmtCond", "BsmtExposure", "BsmtFinType1", "BsmtFinSF1", "BsmtFinType2", "BsmtFinSF2", "BsmtUnfSF",  "TotalBsmtSF", "Heating", "HeatingQC", "CentralAir", "Electrical", "FirstFlrSF", "SecondFlrSF", "LowQualFinSF", "GrLivArea", "BsmtFullBath", "BsmtHalfBath", "FullBath", "HalfBath", "BedroomAbvGr", "KitchenAbvGr", "KitchenQual", "TotRmsAbvGrd", "Functional", "Fireplaces", "FireplaceQu", "GarageType", "GarageYrBlt", "GarageFinish", "GarageCars", "GarageArea", "GarageQual", "GarageCond", "PavedDrive", "WoodDeckSF", "OpenPorchSF", "EnclosedPorch", "ThreeSsnPorch", "ScreenPorch", "PoolArea", "PoolQC", "Fence", "MiscFeature", "MiscVal", "MoSold", "YrSold", "SaleType", "SaleCondition")
 
 #colnames(d1) == colnames(dtest)
 
@@ -225,7 +221,7 @@ dtest$Exterior1st[692] = "BrkFace"
 # the benefit of recoding them as integers would be fewer variables in the model, therefore higher bias but lower variance in the external dataset. As it is, models that use these variables will have lower bias but higher variance in the external dataset.
 
 d1 <- d1 %>%
-mutate(MSZoning = factor(MSZoning),
+  mutate(MSZoning = factor(MSZoning),
        Street = factor(Street),
        Alley = factor(Alley),
        LotShape = factor(LotShape),
@@ -240,8 +236,8 @@ mutate(MSZoning = factor(MSZoning),
        HouseStyle = factor(HouseStyle),
        RoofStyle = factor(RoofStyle),
        RoofMatl = factor(RoofMatl),
-     Exterior1st = factor(Exterior1st),
-      Exterior2nd = factor(Exterior2nd),
+       Exterior1st = factor(Exterior1st),
+       Exterior2nd = factor(Exterior2nd),
        MasVnrType = factor(MasVnrType),
        ExterQual = factor(ExterQual),
        ExterCond = factor(ExterCond),
@@ -270,7 +266,7 @@ mutate(MSZoning = factor(MSZoning),
        HeatingQC = factor(HeatingQC))
 
 dtest <- dtest %>%
-mutate(MSZoning = factor(MSZoning),
+  mutate(MSZoning = factor(MSZoning),
        Street = factor(Street),
        Alley = factor(Alley),
        LotShape = factor(LotShape),
@@ -365,11 +361,11 @@ dtest$Exterior1st <- factor(dtest$Exterior1st, levels = c(factor(d1$Exterior1st)
 dtest$Utilities <- factor(dtest$Utilities, levels = c("AllPub", "NoSeWa","none"))
 d1$Utilities <- factor(d1$Utilities, levels = c("AllPub", "NoSeWa","none"))
 
-dtest$KitchenQual <- factor(dtest$KitchenQual, levels = c("Ex",   "Fa",   "Gd",   "none", "TA" ))
-d1$KitchenQual <- factor(d1$KitchenQual, levels = c("Ex",   "Fa",   "Gd",   "none", "TA" ))
+dtest$KitchenQual <- factor(dtest$KitchenQual, levels = c("Ex", "Fa", "Gd", "none", "TA"))
+d1$KitchenQual <- factor(d1$KitchenQual, levels = c("Ex", "Fa", "Gd", "none","TA"))
 
-dtest$Exterior2nd <- factor(dtest$Exterior2nd, levels = c("AsbShng", "AsphShn", "Brk Cmn", "BrkFace", "CBlock",  "CmentBd", "HdBoard", "ImStucc", "MetalSd", "none",    "Plywood", "Other", "Stone",   "Stucco",  "VinylSd", "Wd Sdng", "Wd Shng" ))
-d1$Exterior2nd <- factor(d1$Exterior2nd, levels = c("AsbShng", "AsphShn", "Brk Cmn", "BrkFace", "CBlock",  "CmentBd", "HdBoard", "ImStucc", "MetalSd", "none",    "Plywood", "Other", "Stone",   "Stucco",  "VinylSd", "Wd Sdng", "Wd Shng" ))
+dtest$Exterior2nd <- factor(dtest$Exterior2nd, levels = c("AsbShng", "AsphShn", "Brk Cmn", "BrkFace", "CBlock", "CmentBd", "HdBoard", "ImStucc", "MetalSd", "none", "Plywood", "Other", "Stone", "Stucco",  "VinylSd", "Wd Sdng", "Wd Shng"))
+d1$Exterior2nd <- factor(d1$Exterior2nd, levels = c("AsbShng", "AsphShn", "Brk Cmn", "BrkFace", "CBlock", "CmentBd", "HdBoard", "ImStucc", "MetalSd", "none", "Plywood", "Other", "Stone", "Stucco", "VinylSd", "Wd Sdng", "Wd Shng"))
 
 
 #MM-Something weird is going on with Exterior1st but i can't figure out what - i'll take another look tomorrow)
@@ -379,9 +375,9 @@ d1$Exterior2nd <- factor(d1$Exterior2nd, levels = c("AsbShng", "AsphShn", "Brk C
 
 
 
-d1$Functional <- factor(d1$Functional, levels = c(levels(dtest$Functional) ))
+d1$Functional <- factor(d1$Functional, levels = c(levels(dtest$Functional)))
 d1$MSZoning <- factor(d1$MSZoning, levels = c(levels(dtest$MSZoning)))
-d1$SaleType <- factor(d1$SaleType, levels = c(levels(dtest$SaleType) ))
+d1$SaleType <- factor(d1$SaleType, levels = c(levels(dtest$SaleType)))
 
 
 ```
@@ -392,8 +388,8 @@ d1$SaleType <- factor(d1$SaleType, levels = c(levels(dtest$SaleType) ))
 #MSSubClass is the type of home and MoSold is the month it was sold, both are categorical in nature
 
 d1 <- d1 %>%
-mutate(MSSubClass = factor(MSSubClass, levels = c("20","30", "40", "45",  "50",  "60",  "70",  "75",  "80",  "85",  "90",  "120", "150", "160", "180", "190")),
-       MoSold = factor(MoSold))
+  mutate(MSSubClass = factor(MSSubClass, levels = c("20", "30", "40", "45", "50", "60", "70", "75","80", "85", "90", "120", "150", "160", "180", "190")),
+         MoSold = factor(MoSold))
        
 # levels(d1$MSSubClass) == levels(dtest$MSSubClass)  MM: dtest has an extra MSSubClass for 150
 
@@ -401,8 +397,8 @@ mutate(MSSubClass = factor(MSSubClass, levels = c("20","30", "40", "45",  "50", 
 
 
 dtest <- dtest %>%
-mutate(MSSubClass = factor(MSSubClass, levels = c("20","30", "40", "45",  "50",  "60",  "70",  "75",  "80",  "85",  "90",  "120", "150", "160", "180", "190")),
-       MoSold = factor(MoSold))
+  mutate(MSSubClass = factor(MSSubClass, levels = c("20","30", "40", "45", "50", "60", "70", "75", "80", "85", "90", "120", "150", "160", "180", "190")),
+         MoSold = factor(MoSold))
 
 
 ```
@@ -726,7 +722,7 @@ kaggle_submit <- dtest %>%
   mutate(SalePrice = predict(submit_model, newdata = dtest))
 
 # Check to make sure submission doesn't have any NAs
- kaggle_submit %>%
+kaggle_submit %>%
   filter(is.na(SalePrice) == TRUE) %>% print
 
 # csv file
@@ -734,7 +730,8 @@ write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.c
 
 # MM: Craig/Belu - you'll need to swap out the path to write the file to your computer.  you can just save it in this section that way any of us can generate the file
 
-#Mike - "C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv"
+#Mike -write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+
 #Craig - "C:\\????
 #Belu - "c:\\????
 
@@ -756,7 +753,7 @@ kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict f
   mutate(SalePrice = exp(predict(submit_model, newdata = dtest)))
 
 # Check to make sure submission doesn't have any NAs
- kaggle_submit %>%
+kaggle_submit %>%
   filter(is.na(SalePrice) == TRUE) %>% print
 
 # csv file
@@ -779,7 +776,7 @@ kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict f
   mutate(SalePrice = exp(predict(submit_model, newdata = dtest)))
 
 # Check to make sure submission doesn't have any NAs
- kaggle_submit %>%
+kaggle_submit %>%
   filter(is.na(SalePrice) == TRUE) %>% print
 
 # csv file
@@ -801,7 +798,7 @@ kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict f
   mutate(SalePrice = exp(predict(submit_model, newdata = dtest)))
 
 # Check to make sure submission doesn't have any NAs
- kaggle_submit %>%
+kaggle_submit %>%
   filter(is.na(SalePrice) == TRUE) %>% print
 
 # csv file
@@ -816,23 +813,47 @@ write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.c
 ```{r}
 #average of RF and LM models
 
-rf_model <-  train(log(SalePrice) ~ ., data = d1, method = "rf") 
-lm_model <-  train(log(SalePrice) ~., data = d1, method = "lm") 
+rf_model <- train(log(SalePrice) ~., data = d1, method = "rf") 
+lm_model <- train(log(SalePrice) ~., data = d1, method = "lm") 
+
+rf_model_predictions <- exp(predict(rf_model, newdata = dtest))
+lm_model_predictions <- exp(predict(lm_model, newdata = dtest))
+
 
 #weighting the rf model higher since it had a better kaggle score
-avg_model <- data.frame(Id = test_labels, SalePrice = (predictions_XGB+2*predictions_lasso)/3)
 
 kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict function
   select(Id) %>% 
-  mutate(SalePrice = exp(predict(submit_model, newdata = dtest)))
+  mutate(SalePrice = ((rf_model_predictions*2.5) + (lm_model_predictions))/3.5)
+
+
+# kaggle score with different weightings between rf and lm
+# 1.5/1 kaggle .13137
+# 2/1 split kaggle .13163
+# 1/1 kaggle .13188
+# 2.5/1 kaggle .13211
+# 3/1 kaggle .13263
+
+
+# caret out of sample: 294   RMSE 0.1496746  R2 0.8600936  MAE 0.10142802
+
+
+write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+
+
+
+head(kaggle_submit)
+
+head(dtest$Id)
 
 ```
+
 
 ## Below is code I lifted from a kaggle kernel. i want to mess with this, but the below code is raw. 
 
 ```{r}
 set.seed(27042018)
-my_control <-trainControl(method="cv", number=5)
+my_control <- trainControl(method="cv", number=5)
 lassoGrid <- expand.grid(alpha = 1, lambda = seq(0.001,0.1,by = 0.0005))
 
 lasso_mod <- train(x=train1, y=all$SalePrice[!is.na(all$SalePrice)], method='glmnet', trControl= my_control, tuneGrid=lassoGrid) 
