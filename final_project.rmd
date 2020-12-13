@@ -826,6 +826,24 @@ kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict f
   select(Id) %>% 
   mutate(SalePrice = ((rf_model_predictions*2.5) + (lm_model_predictions))/3.5)
 
+#MM - ok ran predictions on d1 using the rf and lm lmdels:
+rf_model_predictions_d1 <- exp(predict(rf_model, newdata = d1))
+lm_model_predictions_d1 <- exp(predict(lm_model, newdata = d1))
+
+#MM - Now combined the two predictions into one and add them to the d1 dataset:
+hybrid_model_predictions <- d1 %>%
+  mutate(hybrid_predictions = ((rf_model_predictions_d1*2) + (lm_model_predictions_d1))/3)
+
+#MM - Now regress our hybrid predictions against the actual d1 salePrice values:
+
+hybrid_model_d1 <- train(SalePrice ~ hybrid_predictions, data = hybrid_model_predictions, method = "lm")
+
+hybrid_model_d1
+#out of sample?
+# RMSE      Rsquared   MAE     
+# 11681.82  0.9776433  7369.872
+
+hybrid_model_d1 %>% summary
 
 # kaggle score with different weightings between rf and lm
 # 1.5/1 kaggle .13137
@@ -840,6 +858,7 @@ kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict f
 
 write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
 
+summary(rf_model)
 
 
 head(kaggle_submit)
