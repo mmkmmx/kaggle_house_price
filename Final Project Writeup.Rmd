@@ -36,7 +36,6 @@ Are you writing in full sentences? Are there many gram- matical or spelling erro
 ## Introduction
 Introduction. What is the problem you are working on? Briefly but thoroughly describe the Kaggle train/test format, and your ultimate objective in the project.
 
-<<<<<<< HEAD
 Unlike other products, perhaps two houses can have the same valuation, it is impossible to find two identical homes in the world. There are so many factors that can affect price of houses regardless the cities or countries. Often times homebuyers and real estate companies would come across with a question to consider, "what factors tend to have greater influence on prices?" With the sample training dataset of home prices in Ames, Iowa, there are 80 variables of 1459 homes shown, along with the sales price of each home. That information becomes critical to analyze to find out which are the top factors/predictors of home sales price. After analyzing of the training dataset, we will predict the home prices of 1459 houses in the testing dataset, based on their features. The purpose of this practice is to discover the pattern and build the model to predict home sales prices in the test dataset with the highest accuracy possible. 
 
 ## Data modeling and cleaning
@@ -90,7 +89,7 @@ We then came across the idea of averaging results from multiple models together.
 ## Model performance
 Model performance. How did your model perform on the train set? Report train set RMSE and R2. What is your estimate of the model’s performance on the test set using cross-validation? Report estimated RMSE and R2 on the test set, as well as the score you received back from your Kaggle submission.
 
-<<<<<<< HEAD
+
 
 
 ## Statistical communication
@@ -99,8 +98,8 @@ Statistical communication. Are your figures labelled clearly, accompanied by exp
 ##Overall quality
 Overall quality. Are you writing in full sentences? Are there many gram- matical or spelling errors? Are you using the .Rmd or .Rnw formats correctly so that your final document is attractively formatted? Does the report look sharp, or are there issues with the compile from .Rmd such that there is lots of junk code getting printed to the screen?
 
-=======
->>>>>>> c6cbc39e95a985fded68b59a893eed60bacf592c
+
+
 ## Leaderboard
 Our hybrid model earned a rank of 1769 on the global leaderboard:
 ![](images/final_kaggle_rank.png)
