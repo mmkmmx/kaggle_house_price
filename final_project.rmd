@@ -726,7 +726,7 @@ kaggle_submit %>%
   filter(is.na(SalePrice) == TRUE) %>% print
 
 # csv file
-write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
+#write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
 
 # MM: Craig/Belu - you'll need to swap out the path to write the file to your computer.  you can just save it in this section that way any of us can generate the file
 
@@ -757,7 +757,7 @@ kaggle_submit %>%
   filter(is.na(SalePrice) == TRUE) %>% print
 
 # csv file
-write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
+#write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
 
 # kaggle score = 0.15059
 
@@ -780,7 +780,7 @@ kaggle_submit %>%
   filter(is.na(SalePrice) == TRUE) %>% print
 
 # csv file
-write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
+#write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
 
 # kaggle score = 0.19128
 
@@ -802,7 +802,7 @@ kaggle_submit %>%
   filter(is.na(SalePrice) == TRUE) %>% print
 
 # csv file
-write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
+#write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
 
 # kaggle score = 0.14023
 
@@ -813,7 +813,8 @@ write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.c
 ```{r}
 #average of RF and LM models
 
-rf_model <- train(log(SalePrice) ~., data = d1, method = "rf") 
+#MM- commented this out because it takes forever to run (over an hour) but it is needed to compile everything.
+#rf_model <- train(log(SalePrice) ~., data = d1, method = "rf") 
 lm_model <- train(log(SalePrice) ~., data = d1, method = "lm") 
 
 rf_model_predictions <- exp(predict(rf_model, newdata = dtest))
@@ -837,7 +838,7 @@ kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict f
 # caret out of sample: 294   RMSE 0.1496746  R2 0.8600936  MAE 0.10142802
 
 
-write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+#write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
 
 
 head(kaggle_submit)
@@ -890,32 +891,32 @@ RMSE
 ## Below is code I lifted from a kaggle kernel. i want to mess with this, but the below code is raw. 
 
 ```{r}
-set.seed(27042018)
-my_control <- trainControl(method="cv", number=5)
-lassoGrid <- expand.grid(alpha = 1, lambda = seq(0.001,0.1,by = 0.0005))
-
-lasso_mod <- train(x=train1, y=all$SalePrice[!is.na(all$SalePrice)], method='glmnet', trControl= my_control, tuneGrid=lassoGrid) 
-lasso_mod$bestTune
-min(lasso_mod$results$RMSE)
-
-
-# The documentation of the caret `varImp' function says: for glmboost and glmnet the absolute value of the coefficients corresponding to the tuned model are used.
-
-# Although this means that a real ranking of the most important variables is not stored, it gives me the opportunity to find out how many of the variables are not used in the model (and hence have coefficient 0).
-
-lassoVarImp <- varImp(lasso_mod,scale=F)
-lassoImportance <- lassoVarImp$importance
-
-varsSelected <- length(which(lassoImportance$Overall!=0))
-varsNotSelected <- length(which(lassoImportance$Overall==0))
-
-cat('Lasso uses', varsSelected, 'variables in its model, and did not select', varsNotSelected, 'variables.')
-
-# So lasso did what it is supposed to do: it seems to have dealt with multicolinearity well by not using about 45% of the available variables in the model.
-
-LassoPred <- predict(lasso_mod, test1)
-predictions_lasso <- exp(LassoPred) #need to reverse the log to the real values
-head(predictions_lasso)
+# set.seed(27042018)
+# my_control <- trainControl(method="cv", number=5)
+# lassoGrid <- expand.grid(alpha = 1, lambda = seq(0.001,0.1,by = 0.0005))
+# 
+# lasso_mod <- train(x=train1, y=all$SalePrice[!is.na(all$SalePrice)], method='glmnet', trControl= my_control, tuneGrid=lassoGrid) 
+# lasso_mod$bestTune
+# min(lasso_mod$results$RMSE)
+# 
+# 
+# # The documentation of the caret `varImp' function says: for glmboost and glmnet the absolute value of the coefficients corresponding to the tuned model are used.
+# 
+# # Although this means that a real ranking of the most important variables is not stored, it gives me the opportunity to find out how many of the variables are not used in the model (and hence have coefficient 0).
+# 
+# lassoVarImp <- varImp(lasso_mod,scale=F)
+# lassoImportance <- lassoVarImp$importance
+# 
+# varsSelected <- length(which(lassoImportance$Overall!=0))
+# varsNotSelected <- length(which(lassoImportance$Overall==0))
+# 
+# cat('Lasso uses', varsSelected, 'variables in its model, and did not select', varsNotSelected, 'variables.')
+# 
+# # So lasso did what it is supposed to do: it seems to have dealt with multicolinearity well by not using about 45% of the available variables in the model.
+# 
+# LassoPred <- predict(lasso_mod, test1)
+# predictions_lasso <- exp(LassoPred) #need to reverse the log to the real values
+# head(predictions_lasso)
 
 ```
 
