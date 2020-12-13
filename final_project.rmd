@@ -844,6 +844,15 @@ hybrid_model_d1
 # 11681.82  0.9776433  7369.872
 
 hybrid_model_d1 %>% summary
+#in sample
+# RMSE      Rsquared        
+# 11460  0.9792  
+
+
+
+
+summary(hybrid_model_d1)
+
 
 # kaggle score with different weightings between rf and lm
 # 1.5/1 kaggle .13137
@@ -857,8 +866,6 @@ hybrid_model_d1 %>% summary
 
 
 write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
-
-summary(rf_model)
 
 
 head(kaggle_submit)
