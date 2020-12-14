@@ -2,10 +2,7 @@
 title: "Predicting house sale prices"
 author: "Mike Marett, Belu Chun Ho Chik, Craig Teerlink"
 date: "December 13, 2020"
-output: 
-  pdf_document:
-    toc: FALSE
-#    number_sections: true
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
