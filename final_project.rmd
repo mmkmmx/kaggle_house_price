@@ -786,64 +786,66 @@ kaggle_submit %>%
 
 
 ```
+
+
 ## Log-salePrice on all variables, random forest
-
 ```{r}
-
-submit_model = train(log(SalePrice) ~ ., data = d1, method = "rf") 
-
-# kaggle submission format
-kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict function
-  select(Id) %>% 
-  mutate(SalePrice = exp(predict(submit_model, newdata = dtest)))
-
-# Check to make sure submission doesn't have any NAs
-kaggle_submit %>%
-  filter(is.na(SalePrice) == TRUE) %>% print
-
-# csv file
-#write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
-
-# kaggle score = 0.14023
+# Commenting this out because it takes forever to run but it is essential
+# submit_model = train(log(SalePrice) ~ ., data = d1, method = "rf") 
+# 
+# # kaggle submission format
+# kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict function
+#   select(Id) %>% 
+#   mutate(SalePrice = exp(predict(submit_model, newdata = dtest)))
+# 
+# # Check to make sure submission doesn't have any NAs
+# kaggle_submit %>%
+#   filter(is.na(SalePrice) == TRUE) %>% print
+# 
+# # csv file
+# #write.csv(kaggle_submit,"C:\\Users\\Genetic\ Epidemiology\\Desktop\\submission.csv", row.names = FALSE)
+# 
+# # kaggle score = 0.14023
 
 ```
 
 
 ## Trying an average of two models together - since RF and LM are different they might result in a better overall model if we average them
+
 ```{r}
 #average of RF and LM models
 
-#MM- commented this out because it takes forever to run (over an hour) but it is needed to compile everything.
-#rf_model <- train(log(SalePrice) ~., data = d1, method = "rf") 
-lm_model <- train(log(SalePrice) ~., data = d1, method = "lm") 
-
-rf_model_predictions <- exp(predict(rf_model, newdata = dtest))
-lm_model_predictions <- exp(predict(lm_model, newdata = dtest))
-
-
-#weighting the rf model higher since it had a better kaggle score
-
-kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict function
-  select(Id) %>% 
-  mutate(SalePrice = ((rf_model_predictions*2.5) + (lm_model_predictions))/3.5)
-
-# kaggle score with different weightings between rf and lm
-# 1.5/1 kaggle .13137
-# 2/1 split kaggle .13163
-# 1/1 kaggle .13188
-# 2.5/1 kaggle .13211
-# 3/1 kaggle .13263
-
-
-# caret out of sample: 294   RMSE 0.1496746  R2 0.8600936  MAE 0.10142802
-
-
-#write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
-
-
-head(kaggle_submit)
-
-head(dtest$Id)
+#MM- commented this section  out because it takes forever to run (over an hour) but it is needed to compile everything.
+# #rf_model <- train(log(SalePrice) ~., data = d1, method = "rf") 
+# lm_model <- train(log(SalePrice) ~., data = d1, method = "lm") 
+# 
+# rf_model_predictions <- exp(predict(rf_model, newdata = dtest))
+# lm_model_predictions <- exp(predict(lm_model, newdata = dtest))
+# 
+# 
+# #weighting the rf model higher since it had a better kaggle score
+# 
+# kaggle_submit <- dtest %>%   # This time I added 'exp' function on the predict function
+#   select(Id) %>% 
+#   mutate(SalePrice = ((rf_model_predictions*2.5) + (lm_model_predictions))/3.5)
+# 
+# # kaggle score with different weightings between rf and lm
+# # 1.5/1 kaggle .13137
+# # 2/1 split kaggle .13163
+# # 1/1 kaggle .13188
+# # 2.5/1 kaggle .13211
+# # 3/1 kaggle .13263
+# 
+# 
+# # caret out of sample: 294   RMSE 0.1496746  R2 0.8600936  MAE 0.10142802
+# 
+# 
+# #write.csv(kaggle_submit,"C:\\Users\\mmkmm\\Documents\\github\\kaggle_house_price\\submission.csv", row.names = FALSE)
+# 
+# 
+# head(kaggle_submit)
+# 
+# head(dtest$Id)
 
 
 
@@ -853,72 +855,41 @@ head(dtest$Id)
 
 #RMSE
 ```{r}
-
-hybrid_model_d1
-#out of sample?
-# RMSE      Rsquared   MAE     
-# 11681.82  0.9776433  7369.872
-
-hybrid_model_d1 %>% summary
-#in sample
-# RMSE      Rsquared   
-# 11460  0.9792  
-
-#MM - ok ran predictions on d1 using the rf and lm lmdels:
-rf_model_predictions_d1 <- exp(predict(rf_model, newdata = d1))
-lm_model_predictions_d1 <- exp(predict(lm_model, newdata = d1))
-
-#MM - Now combined the two predictions into one and add them to the d1 dataset:
-hybrid <- d1 %>%
-  mutate(hybrid_predictions = ((rf_model_predictions_d1*2) + (lm_model_predictions_d1))/3)
-
-#MM - Now regress our hybrid predictions against the actual d1 salePrice values:
-
-hybrid_model_d1 <- train(hybrid_predictions ~ SalePrice, data = hybrid_model_predictions, method = "lm")
-
-hybrid_model_d1
-
-summary(hybrid_model_d1)
-
-error <- hybrid$hybrid_predictions - hybrid$SalePrice
-
-RMSE <- sqrt(mean(error ^ 2))
-
-RMSE
+# #Commented this out because its dependent on the prior sections but due to the long running rf model it won't knit but this is where we determined the RMSE and R2 values.
+# hybrid_model_d1
+# #out of sample?
+# # RMSE      Rsquared   MAE     
+# # 11681.82  0.9776433  7369.872
+# 
+# hybrid_model_d1 %>% summary
+# #in sample
+# # RMSE      Rsquared   
+# # 11460  0.9792  
+# 
+# #MM - ok ran predictions on d1 using the rf and lm lmdels:
+# rf_model_predictions_d1 <- exp(predict(rf_model, newdata = d1))
+# lm_model_predictions_d1 <- exp(predict(lm_model, newdata = d1))
+# 
+# #MM - Now combined the two predictions into one and add them to the d1 dataset:
+# hybrid <- d1 %>%
+#   mutate(hybrid_predictions = ((rf_model_predictions_d1*2) + (lm_model_predictions_d1))/3)
+# 
+# #MM - Now regress our hybrid predictions against the actual d1 salePrice values:
+# 
+# hybrid_model_d1 <- train(hybrid_predictions ~ SalePrice, data = hybrid_model_predictions, method = "lm")
+# 
+# hybrid_model_d1
+# 
+# summary(hybrid_model_d1)
+# 
+# error <- hybrid$hybrid_predictions - hybrid$SalePrice
+# 
+# RMSE <- sqrt(mean(error ^ 2))
+# 
+# RMSE
 ```
 
 
-## Below is code I lifted from a kaggle kernel. i want to mess with this, but the below code is raw. 
-
-```{r}
-# set.seed(27042018)
-# my_control <- trainControl(method="cv", number=5)
-# lassoGrid <- expand.grid(alpha = 1, lambda = seq(0.001,0.1,by = 0.0005))
-# 
-# lasso_mod <- train(x=train1, y=all$SalePrice[!is.na(all$SalePrice)], method='glmnet', trControl= my_control, tuneGrid=lassoGrid) 
-# lasso_mod$bestTune
-# min(lasso_mod$results$RMSE)
-# 
-# 
-# # The documentation of the caret `varImp' function says: for glmboost and glmnet the absolute value of the coefficients corresponding to the tuned model are used.
-# 
-# # Although this means that a real ranking of the most important variables is not stored, it gives me the opportunity to find out how many of the variables are not used in the model (and hence have coefficient 0).
-# 
-# lassoVarImp <- varImp(lasso_mod,scale=F)
-# lassoImportance <- lassoVarImp$importance
-# 
-# varsSelected <- length(which(lassoImportance$Overall!=0))
-# varsNotSelected <- length(which(lassoImportance$Overall==0))
-# 
-# cat('Lasso uses', varsSelected, 'variables in its model, and did not select', varsNotSelected, 'variables.')
-# 
-# # So lasso did what it is supposed to do: it seems to have dealt with multicolinearity well by not using about 45% of the available variables in the model.
-# 
-# LassoPred <- predict(lasso_mod, test1)
-# predictions_lasso <- exp(LassoPred) #need to reverse the log to the real values
-# head(predictions_lasso)
-
-```
 
 
 

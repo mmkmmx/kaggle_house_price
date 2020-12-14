@@ -69,13 +69,9 @@ We then came across the idea of averaging results from multiple models together.
 ## Model performance
 Calculating RMSE and R2 on the random forest and combined model proved to be a bit tricky.  We ultimately ended up regression our predictions against the actual train SalePrice values and then using those to report an RMSE that reflected the hybrid randomforest/linear components of the model.  To that end we estimated the following in and out of sample performance measures.
 
-In Sample
-* RMSE = 11460
-* R^2^ = 0.9792
+In Sample RMSE is 11460 and R^2^ is 0.9792.
 
-Out of Sample
-* RMSE = 11681.82
-* R^2^ = 0.9776433
+Out of Sample RMSE is 11682 and R^2^ = 0.9776.
 
 Based on the out of sample RMSE and R^2^ being relatively close to the in sample figures, we believe that our model does not suffer from overfitting and will perform well with new test data.
 

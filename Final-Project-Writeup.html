@@ -444,8 +444,8 @@ summary {
 <div id="model-performance" class="section level2">
 <h2>Model performance</h2>
 <p>Calculating RMSE and R2 on the random forest and combined model proved to be a bit tricky. We ultimately ended up regression our predictions against the actual train SalePrice values and then using those to report an RMSE that reflected the hybrid randomforest/linear components of the model. To that end we estimated the following in and out of sample performance measures.</p>
-<p>In Sample * RMSE = 11460 * R<sup>2</sup> = 0.9792</p>
-<p>Out of Sample * RMSE = 11681.82 * R<sup>2</sup> = 0.9776433</p>
+<p>In Sample RMSE is 11460 and R<sup>2</sup> is 0.9792.</p>
+<p>Out of Sample RMSE is 11682 and R<sup>2</sup> = 0.9776.</p>
 <p>Based on the out of sample RMSE and R<sup>2</sup> being relatively close to the in sample figures, we believe that our model does not suffer from overfitting and will perform well with new test data.</p>
 <p>Our final Kaggle submission score is .13137.</p>
 </div>
